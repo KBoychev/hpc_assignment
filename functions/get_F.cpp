@@ -3,21 +3,19 @@
 
 void get_F(int r, double *F, int r_e, double *F_e, int N,double Fy) {
 
+
 	int n = 1;
+	int i_e=0;
 
-	for (int i = 0; i<r; i++) {
+	for(int n=1;n<=N;n++){
 
-		F[i] = 0;
+		i_e=0;
 
-		if (i >= 3 * n && i <= (3 * n + 2) && n<N) {
-			F[i] = F_e[(i - 3 * (n - 1))] + F_e[(i - 3 * (n - 1)) - 3];
-		}
-		else {
-			F[i] = F_e[(i - 3 * (n - 1))];
-		}
+		for(int i=(3*n-3);i<3*(n+1);i++){
 
-		if (i == (3 * n + 2)) {
-			n++;
+			F[i]=F_e[i_e]+F[i];
+
+			i_e++;
 		}
 
 	}

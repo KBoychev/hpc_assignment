@@ -18,7 +18,7 @@ void set_K_e(int,int,double*,double,double,double,double);
 void set_Fe(int,double*,double, double);
 
 
-void get_M(int,int,double,int,double,int);
+void get_M(int,int,double*,int,double*,int);
 
 void get_K(int,int,double*,int,double*, int);
 

@@ -16,7 +16,7 @@ int main() {
 	//// Beam and element geometry and material properties
 	//--------------------------------------------------------
 
-	int N_e = 2; // - (number of elements)
+	int N_e = 4; // - (number of elements)
 	double L = 10.0; // m (beam length)
 	double l = L / N_e; //m (element length)
 
@@ -25,11 +25,20 @@ int main() {
 	double E = 210000000000; //2.1*pow(10,11); //Pa (Young's modulus)
 	double rho = 7850; //kg/m^3 (material density)
 	double T = 1; //s (end time)
-	int N_t = 10; //- (number of time steps)
-	double dt=T/N_t; //s (timestep)
+	int N_t = 1000; //- (number of time steps)
+	double dt=T/(N_t-1); //s (timestep)
 	double t=0; //s (time)
 	double qy=1000;
 	double Fy=1000;
+
+
+	cout<<setprecision(6);
+
+	cout<<"l:"<<l<<"m"<<endl;
+	cout<<"A:"<<A<<"m2"<<endl;
+	cout<<"I:"<<I<<"m4"<<endl;
+	cout<<"E:"<<E<<"Pa"<<endl;
+	cout<<"dt:"<<dt<<"s"<<endl;
 
 
 	//// Element mass,stiffness, force matrices 
@@ -82,7 +91,7 @@ int main() {
 	//// Get global mass matrix [M]
 	//--------------------------------------------------------
 
-	get_K(r, c, M, r_e, M_e, N_e);
+	get_M(r, c, M, r_e, M_e, N_e);
 
 	disp(r,c,M,"M");
 
@@ -101,7 +110,7 @@ int main() {
 	disp(r,1,F,"F");
 
 
-	//// Solve for static equilibrium [K]{u}={F}. Solution
+	//// Solve for static problem [K]{u}={F}. Solution
 	// 	 is done with conjugate gradient descent algorithm,
 	//   implemented with BLAS library routines.
 	//--------------------------------------------------------
@@ -124,10 +133,73 @@ int main() {
 	disp(r,1,F,"u");
 
 
-	//// Solve the dynamic problem.
+	cout<<"Solving [M]d2{u}/dt2+[K]{u}={F}"<<endl;
+
+	cout<<endl;
+
+	//// Solve the dynamic problem. [M]d2{u}/dt2+[K]{u}={F}
 	//--------------------------------------------------------
+	
+	for(int n_t=0;n_t<N_t;n_t++){
+
+		cout<<"Iteration "<<n_t<<" t="<<t<<endl;
+
+		qy=t*1000.0/T;
+
+		Fy=t*1000.0/T;
+
+		set_Fe(r_e, F_e, l,qy);
+
+		get_F(r, F, r_e, F_e, N_e,Fy);
+
+		
+
+		//Get u(n+1)
+		//-------------------------------
+		for(int i=0;i<r;i++){
+
+			u_n[i]=0;
+
+			for(int j=0;j<c;j++){
+
+				u_n[i]=u_n[i]-(K[i*r+j]-2.0/(dt*dt)*M[i*r+j])*u[j]-1.0/(dt*dt)*M[i*r+j]*u_p[j];
+
+			}
+
+			u_n[i]=u_n[i]+F[i];
+			u_n[i]=u_n[i]*dt*dt*1.0/M[i*r+i];
+		}
+
+		//Set boundary conditions
+
+		u_n[0]=0;
+		u_n[1]=0;
+		u_n[2]=0;
+		u_n[r-1]=0;
+		u_n[r-2]=0;
+		u_n[r-3]=0;
+
+		
+		for(int i=0;i<r;i++){
+			u_p[i]=u[i];
+			u[i]=u_n[i];
+		}
+		
+
+		t=t+dt;
 
 
+	}
+
+	cout<<endl;
+
+	cout<<"Done!"<<endl;
+
+ 	cout<<endl;
+
+	disp(r,1,F,"F");
+	disp(r,1,u,"u");
+	
 	
 
 	return 0;

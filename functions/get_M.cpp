@@ -1,23 +1,30 @@
 #include "functions.h"
 
 
-void get_M(int r, int c, double *M, int r_e, double *M_e, int N_e) {
+void get_M(int r, int c, double *M, int r_e, double *M_e, int N) {
 
-	int n_e = 1;
+	int n = 1;
+	int i_e=0;
+	int j_e=0;
 
-	for (int i = 0; i<r; i++) {
+	for(int n=1;n<=N;n++){
 
-		if (i >= 3 * n_e && i <= (3 * n_e + 2) && n_e<N_e) {
+		i_e=0;
 
-			M[i*r+i]=M_e[((i - 3 * (n_e - 1)) - 3)*r_e + ((i - 3 * (n_e - 1)) - 3)] + M_e[(i - 3 * (n_e - 1))*r_e + (i - 3 * (n_e - 1))];
+		for(int i=(3*n-3);i<3*(n+1);i++){
 
-		}else{
+			j_e=0;
 
-			M[i*r + i] = M_e[(i - 3 * (n_e - 1))*r_e + (i - 3 * (n_e - 1))];
-				
+			for(int j=(3*n-3);j<3*(n+1);j++){
+
+					M[i*r+j]=M_e[i_e*r_e+j_e]+M[i*r+j];
+
+					j_e++;
+			}
+
+			i_e++;
 		}
 
 	}
-
 
 }
