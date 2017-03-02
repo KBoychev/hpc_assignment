@@ -1,7 +1,7 @@
 #include "functions.h"
 
 
-void set_Fe(int n_e, double *F_e, double l, double qy) {
+void set_Fe(int &n_e, double *F_e, double &l, double &qy) {
 
 	F_e[0] = 0;
 	F_e[1] = qy*l / 2;

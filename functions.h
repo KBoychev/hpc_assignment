@@ -7,23 +7,26 @@
 #include <iostream>
 #include <iomanip>
 #include <string>
+#include <Accelerate/Accelerate.h>
 
 using namespace std;
 
 
-void set_Me(int,int,double*,double,double,double);
+void set_Me(int&,int&,double*,double&,double&,double&);
 
-void set_K_e(int,int,double*,double,double,double,double);
+void set_K_e(int&,int&,double*,double&,double&,double&,double&);
 
-void set_Fe(int,double*,double, double);
+void set_Fe(int&,double*,double&, double&);
 
 
-void get_M(int,int,double*,int,double*,int);
+void get_M(int&,int&,double*,int&,double*,int&);
 
-void get_K(int,int,double*,int,double*, int);
+void get_K(int&,int&,double*,int&,double*, int&);
 
-void get_F(int,double*,int,double*,int,double);
+void get_F(int&,double*,int&,double*,int&,double&);
 
+
+void inv(double*,int&);
 
 void disp(int,int,double*,string);
 

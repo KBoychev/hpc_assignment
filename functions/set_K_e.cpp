@@ -1,7 +1,7 @@
 #include "functions.h"
 
 
-void set_K_e(int r_e, int c_e, double *K_e, double E, double A, double I, double l) {
+void set_K_e(int &r_e, int &c_e, double *K_e, double &E, double &A, double &I, double &l) {
 
 	for (int i = 0; i<r_e; i++) {
 		for (int j = i; j<c_e; j++) {

@@ -6,8 +6,8 @@ default: task1 clean run
 
 all: task1 clean run
 
-task1: main.o set_M_e.o set_K_e.o set_F_e.o get_M.o get_K.o get_F.o disp.o	
-	$(C) main.o $(FNCSD)set_M_e.o $(FNCSD)set_K_e.o $(FNCSD)set_F_e.o $(FNCSD)get_M.o $(FNCSD)get_K.o $(FNCSD)get_F.o $(FNCSD)disp.o -llapack -lblas -o task1.out
+task1: main.o set_M_e.o set_K_e.o set_F_e.o get_M.o get_K.o get_F.o inv.o disp.o	
+	$(C) main.o $(FNCSD)set_M_e.o $(FNCSD)set_K_e.o $(FNCSD)set_F_e.o $(FNCSD)get_M.o $(FNCSD)get_K.o $(FNCSD)get_F.o $(FNCSD)inv.o $(FNCSD)disp.o -llapack -lblas -o task1.out
 
 main.o: 	
 	$(C) $(CFLAGS) main.cpp -o main.o
@@ -30,6 +30,9 @@ get_K.o:
 
 get_F.o:
 	$(C) $(CFLAGS) $(FNCSD)get_F.cpp -o $(FNCSD)get_F.o
+
+inv.o:
+	$(C) $(CFLAGS) $(FNCSD)inv.cpp -o $(FNCSD)inv.o
 
 disp.o:
 	$(C) $(CFLAGS) $(FNCSD)disp.cpp -o $(FNCSD)disp.o

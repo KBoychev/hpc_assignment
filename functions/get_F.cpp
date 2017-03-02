@@ -1,7 +1,7 @@
 #include "functions.h"
 
 
-void get_F(int r, double *F, int r_e, double *F_e, int N,double Fy) {
+void get_F(int &r, double *F, int &r_e, double *F_e, int &N,double &Fy) {
 
 
 	int n = 1;

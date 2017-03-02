@@ -1,7 +1,7 @@
 #include "functions.h"
 
 
-void get_M(int r, int c, double *M, int r_e, double *M_e, int N) {
+void get_M(int &r, int &c, double *M, int &r_e, double *M_e, int &N) {
 
 	int n = 1;
 	int i_e=0;

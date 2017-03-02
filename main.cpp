@@ -3,8 +3,6 @@
 #include <iostream>
 #include <iomanip>
 
-#include <Accelerate/Accelerate.h>
-
 
 #include "functions.h"
 
@@ -16,7 +14,7 @@ int main() {
 	//// Beam and element geometry and material properties
 	//--------------------------------------------------------
 
-	int N_e = 24; // - (number of elements)
+	int N_e = 4; // - (number of elements)
 	double L = 10.0; // m (beam length)
 	double l = L / N_e; //m (element length)
 
@@ -109,69 +107,199 @@ int main() {
 
 	disp(r,1,F,"F");
 
+	//// Free memory from element matrices that are not going to be used again
+	//--------------------------------------------------------
+
+	delete[] M_e;
+	delete[] K_e;
 
 	//// Solve for static problem [K]{u}={F}. Solution
 	// 	 is done with conjugate gradient descent algorithm,
 	//   implemented with BLAS library routines.
 	//--------------------------------------------------------
 
-	//fucks up [K] matrix for the next problem!!!!! separate codes
+	
 
 	// cout<<endl;
- 	// cout<<"Solving [K]{u}={F}"<<endl;
+ 	// 	cout<<"Solving [K]{u}={F}"<<endl;
 
-	// int dgesv_piv[r];
-	// int dgesv_inf;
-	// int dgesv_c=1;
-	// char dgesv_t='T';
+	// inv(K,r); //The inverse function ovverwrites the matrix [K] !
 
-	// dgetrf_(&r, &r, K, &r, dgesv_piv, &dgesv_inf);
-	// dgetrs_(&dgesv_t, &r, &dgesv_c, K, &r, dgesv_piv, F, &r, &dgesv_inf);
+	// disp(r,c,K,"K_inv");
+
+	// for(int i=0;i<r;i++){
+	// 	u[i]=0;
+	// 	for(int j=0;j<c;j++){
+	// 		u[i]=u[i]+K[i*r+j]*F[j];
+	// 	}
+	// }
+
+	// cout<<"Done!"<<endl;
+
+ 	// cout<<endl;
+
+	// disp(r,1,u,"u");
+
+
+
+	//// Solve the dynamic problem [M]d2{u}/dt2+[K]{u}={F}. Solution
+	//	 is performed with explicit integration method.
+	//--------------------------------------------------------
+
+	// cout<<"Solving [M]d2{u}/dt2+[K]{u}={F}"<<endl;
+
+	// cout<<endl;
+
+
+	 double *tmp = new double[r]();
+
+	
+	// for(int n_t=1;n_t<=N_t;n_t++){
+
+	// 	//cout<<"Iteration "<<n_t<<" t="<<t<<endl;
+
+	// 	qy=t*1000.0/T;
+
+	// 	Fy=t*1000.0/T;
+
+	// 	set_Fe(r_e, F_e, l,qy);
+
+	// 	get_F(r, F, r_e, F_e, N_e,Fy);
+
+
+	// 	//Get u(n+1)
+	// 	//-------------------------------
+	// 	for(int i=0;i<r;i++){
+
+	// 		tmp[i]=0;
+
+	// 		for(int j=0;j<c;j++){
+
+	// 			tmp[i]=tmp[i]-(K[i*r+j]-2.0/(dt*dt)*M[i*r+j])*u[j]-1.0/(dt*dt)*M[i*r+j]*u_p[j];
+
+	// 		}
+
+	// 		tmp[i]=tmp[i]+F[i];
+
+	// 		u_n[i]=tmp[i]*dt*dt*1.0/M[i*r+i];
+	// 	}
+
+	// 	//Set boundary conditions
+	// 	//-------------------------------
+
+	// 	u_n[0]=0;
+	// 	u_n[1]=0;
+	// 	u_n[2]=0;
+	// 	u_n[r-1]=0;
+	// 	u_n[r-2]=0;
+	// 	u_n[r-3]=0;
+
+		
+	// 	for(int i=0;i<r;i++){
+	// 		u_p[i]=u[i];
+	// 		u[i]=u_n[i];
+	// 	}
+		
+
+	// 	t=t+dt;
+
+
+	// }
+
+
+	// delete[] u_p;
+
+	// cout<<endl;
 
 	// cout<<"Done!"<<endl;
 
  	// 	cout<<endl;
 
-	// disp(r,1,F,"u");
+	// disp(r,1,u,"u");
+	
+	
 
+	// //// Solve the dynamic problem [M]d2{u}/dt2+[K]{u}={F}. Solution
+	// //	 is performed with implicit integration method.
+	// //--------------------------------------------------------
 
 	cout<<"Solving [M]d2{u}/dt2+[K]{u}={F}"<<endl;
 
-	cout<<endl;
+	memset(u,0,r*sizeof(*u));
 
-	//// Solve the dynamic problem. [M]d2{u}/dt2+[K]{u}={F}
-	//--------------------------------------------------------
+	double *u_tt = new double[r]();
+	double *u_tt_n = new double[r]();
+	double *u_t = new double[r]();
+	double *u_t_n = new double[r]();
+	double *K_eff = new double[r*c]();
+
+
+	for(int i=0;i<r;i++){
+		for(int j=0;j<r;j++){
+			K_eff[i*r+j]=4.0/(dt*dt)*M[i*r+j]+K[i*r+j];
+		}
+	}
+
+	disp(r,c,K_eff,"K_eff");
+
+	inv(K_eff,r);
+
+	disp(r,c,K_eff,"K_eff");
+
+
+	cout<<endl;
 	
-	for(int n_t=1;n_t<=N_t;n_t++){
+	for(int n_t=1;n_t<=2;n_t++){
 
 		//cout<<"Iteration "<<n_t<<" t="<<t<<endl;
 
-		qy=t*1000.0/T;
+		qy=(t+dt)*1000.0/T;
 
-		Fy=t*1000.0/T;
+		Fy=(t+dt)*1000.0/T;
 
 		set_Fe(r_e, F_e, l,qy);
 
 		get_F(r, F, r_e, F_e, N_e,Fy);
 
 
-		//Get u(n+1)
+		//Get u_n
 		//-------------------------------
+		for(int i=0;i<r;i++){
+
+			tmp[i]=0;
+
+			for(int j=0;j<c;j++){
+
+				tmp[i]=tmp[i]+M[i*r+j]*(4.0/(dt*dt)*u[j]+4.0/dt*u_t[j]+u_tt[j]);
+
+			}
+
+			tmp[i]=tmp[i]+F[i];
+		}
+
+
 		for(int i=0;i<r;i++){
 
 			u_n[i]=0;
 
 			for(int j=0;j<c;j++){
-
-				u_n[i]=u_n[i]-(K[i*r+j]-2.0/(dt*dt)*M[i*r+j])*u[j]-1.0/(dt*dt)*M[i*r+j]*u_p[j];
+				u_n[i]=u_n[i]+K_eff[i*r+j]*tmp[j];
 
 			}
 
-			u_n[i]=u_n[i]+F[i];
-			u_n[i]=u_n[i]*dt*dt*1.0/M[i*r+i];
+			u_tt_n[i]=4.0/(dt*dt)*(u_n[i]-u[i])-4.0/dt*u_t[i]-u_tt[i];
+
+			u_t_n[i]=u[i]+dt*(1-0.5)*u_tt[i]+dt*0.5*u_tt_n[i];
 		}
 
+		disp(r,1,F,"F");
+		disp(r,1,tmp,"tmp");
+		disp(r,1,u_n,"u");
+		disp(r,1,u_tt_n,"u_tt");
+		disp(r,1,u_t_n,"u_t");
+
 		//Set boundary conditions
+		//-------------------------------
 
 		u_n[0]=0;
 		u_n[1]=0;
@@ -180,17 +308,40 @@ int main() {
 		u_n[r-2]=0;
 		u_n[r-3]=0;
 
+		u_t_n[0]=0;
+		u_t_n[1]=0;
+		u_t_n[2]=0;
+		u_t_n[r-1]=0;
+		u_t_n[r-2]=0;
+		u_t_n[r-3]=0;
+
+		u_tt_n[0]=0;
+		u_tt_n[1]=0;
+		u_tt_n[2]=0;
+		u_tt_n[r-1]=0;
+		u_tt_n[r-2]=0;
+		u_tt_n[r-3]=0;
+
 		
 		for(int i=0;i<r;i++){
-			u_p[i]=u[i];
 			u[i]=u_n[i];
+			u_t[i]=u_t_n[i];
+			u_tt[i]=u_tt_n[i];
 		}
+
+		disp(r,1,u,"u");
 		
 
 		t=t+dt;
 
-
 	}
+
+
+	delete[] u_tt;
+	delete[] u_tt_n;
+	delete[] u_t;
+	delete[] u_t_n;
+	delete[] tmp;
 
 	cout<<endl;
 
@@ -199,8 +350,7 @@ int main() {
  	cout<<endl;
 
 	disp(r,1,u,"u");
-	
-	
+
 
 	return 0;
 }

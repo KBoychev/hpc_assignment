@@ -1,7 +1,7 @@
 #include "functions.h"
 
 
-void get_K(int r, int c, double *K, int r_e, double *K_e, int N) {
+void get_K(int &r, int &c, double *K, int &r_e, double *K_e, int &N) {
 
 	int n = 1;
 	int i_e=0;
