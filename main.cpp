@@ -128,54 +128,7 @@ int main() {
 	//--------------------------------------------------------
 
 
-	// cblas_dscal(r,0,u,1); //reset u
-
-
-	// cout<<endl;
- 	 // 	cout<<"Solving [M]{u_tt}+[K]{u}={F} for N_t "<<N_t<<" and dt "<<dt<<endl;
-
-	// for (int n_t=0;n_t<=N_t;n_t++){
-
-	// 	cout<<endl;
-	// 	cout<<"Iteration "<<n_t<<" t "<<t<<endl;
-
-		   
-	// 	qy=t*1000/T;
-	// 	Fy=t*1000/T;
-
-	// 	set_Fe(r_e, F_e, l,qy);
-
-	// 	get_F(r, F, r_e, F_e, N_e,Fy);
-
-	// 	for(int i=0;i<r;i++){
-
-	// 		for(int j=0;j<c;j++){
-
-	// 			u_n[i]=u_n[i]-(K[i*r+j]-2.0/(dt*dt)*M[i*r+j])*u[j]-1.0/(dt*dt)*M[i*r+j]*u_p[j];
-
-	// 		}
-
-	// 		u_n[i]=u_n[i]+F[i];
-
-	// 		//cout<<u_n[i]<<endl;
-
-	// 		u_n[i]=u_n[i]*dt*dt/M[i*r+i];
-
-	// 		cout<<u_n[i]<<endl;
-
-			
-
-	// 	}
-
-	// 	disp(r,1,u_n,"u_n");
-
-	// 	cblas_dcopy(r,u,1,u_p,1);
-	// 	cblas_dcopy(r,u_n,1,u,1);
-
-		
-
-	// 	t=t+dt;
-	// }
+	
 
 	return 0;
 }
