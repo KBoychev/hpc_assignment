@@ -16,7 +16,7 @@ int main() {
 	//// Beam and element geometry and material properties
 	//--------------------------------------------------------
 
-	int N_e = 4; // - (number of elements)
+	int N_e = 24; // - (number of elements)
 	double L = 10.0; // m (beam length)
 	double l = L / N_e; //m (element length)
 
@@ -25,7 +25,7 @@ int main() {
 	double E = 210000000000; //2.1*pow(10,11); //Pa (Young's modulus)
 	double rho = 7850; //kg/m^3 (material density)
 	double T = 1; //s (end time)
-	int N_t = 1000; //- (number of time steps)
+	int N_t = 10000; //- (number of time steps)
 	double dt=T/(N_t-1); //s (timestep)
 	double t=0; //s (time)
 	double qy=1000;
@@ -115,22 +115,24 @@ int main() {
 	//   implemented with BLAS library routines.
 	//--------------------------------------------------------
 
-	cout<<endl;
- 	cout<<"Solving [K]{u}={F}"<<endl;
+	//fucks up [K] matrix for the next problem!!!!! separate codes
 
-	int dgesv_piv[r];
-	int dgesv_inf;
-	int dgesv_c=1;
-	char dgesv_t='T';
+	// cout<<endl;
+ 	// cout<<"Solving [K]{u}={F}"<<endl;
 
-	dgetrf_(&r, &r, K, &r, dgesv_piv, &dgesv_inf);
-	dgetrs_(&dgesv_t, &r, &dgesv_c, K, &r, dgesv_piv, F, &r, &dgesv_inf);
+	// int dgesv_piv[r];
+	// int dgesv_inf;
+	// int dgesv_c=1;
+	// char dgesv_t='T';
 
-	cout<<"Done!"<<endl;
+	// dgetrf_(&r, &r, K, &r, dgesv_piv, &dgesv_inf);
+	// dgetrs_(&dgesv_t, &r, &dgesv_c, K, &r, dgesv_piv, F, &r, &dgesv_inf);
 
- 	cout<<endl;
+	// cout<<"Done!"<<endl;
 
-	disp(r,1,F,"u");
+ 	// 	cout<<endl;
+
+	// disp(r,1,F,"u");
 
 
 	cout<<"Solving [M]d2{u}/dt2+[K]{u}={F}"<<endl;
@@ -140,9 +142,9 @@ int main() {
 	//// Solve the dynamic problem. [M]d2{u}/dt2+[K]{u}={F}
 	//--------------------------------------------------------
 	
-	for(int n_t=0;n_t<N_t;n_t++){
+	for(int n_t=1;n_t<=N_t;n_t++){
 
-		cout<<"Iteration "<<n_t<<" t="<<t<<endl;
+		//cout<<"Iteration "<<n_t<<" t="<<t<<endl;
 
 		qy=t*1000.0/T;
 
@@ -152,7 +154,6 @@ int main() {
 
 		get_F(r, F, r_e, F_e, N_e,Fy);
 
-		
 
 		//Get u(n+1)
 		//-------------------------------
@@ -197,7 +198,6 @@ int main() {
 
  	cout<<endl;
 
-	disp(r,1,F,"F");
 	disp(r,1,u,"u");
 	
 	
