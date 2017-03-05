@@ -3,7 +3,7 @@
 
 void get_K(int &r, int &c, double *K, int &r_e, double *K_e, int &N) {
 
-	int n = 1;
+
 	int i_e=0;
 	int j_e=0;
 
@@ -25,18 +25,6 @@ void get_K(int &r, int &c, double *K, int &r_e, double *K_e, int &N) {
 			i_e++;
 		}
 
-	}
-
-	for (int i = 0; i<r; i++) {
-		for (int j = 0; j<c; j++) {
-			if(i==0||i==1||i==2||i==r-3||i==r-2||i==r-1){
-				if(j==i){
-					K[i*r+j]=1;
-				}else{
-					K[i*r+j]=0;				
-				}
-			}
-		}
 	}
 
 }

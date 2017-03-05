@@ -30,13 +30,13 @@ int main() {
 	double Fy=1000;
 
 
-	cout<<setprecision(6);
+	std::cout<<std::setprecision(6);
 
-	cout<<"l:"<<l<<"m"<<endl;
-	cout<<"A:"<<A<<"m2"<<endl;
-	cout<<"I:"<<I<<"m4"<<endl;
-	cout<<"E:"<<E<<"Pa"<<endl;
-	cout<<"dt:"<<dt<<"s"<<endl;
+	std::cout<<"l:"<<l<<"m"<<std::endl;
+	std::cout<<"A:"<<A<<"m2"<<std::endl;
+	std::cout<<"I:"<<I<<"m4"<<std::endl;
+	std::cout<<"E:"<<E<<"Pa"<<std::endl;
+	std::cout<<"dt:"<<dt<<"s"<<std::endl;
 
 
 	//// Element mass,stiffness, force matrices 
@@ -68,7 +68,7 @@ int main() {
 	//// Set element mass matrix [M_e]
 	//--------------------------------------------------------
 
-	set_Me(r_e,c_e, M_e, rho, A, l);
+	set_M_e(r_e,c_e, M_e, rho, A, l);
 
 	disp(r_e,c_e,M_e,"M_e");
 
@@ -82,7 +82,7 @@ int main() {
 	//// Set element load vector {F_e}
 	//--------------------------------------------------------
 
-	set_Fe(r_e, F_e, l,qy);
+	set_F_e(r_e, F_e, l,qy);
 
 	disp(r_e,1,F_e,"F_e");
 
@@ -98,12 +98,35 @@ int main() {
 
 	get_K(r, c, K, r_e, K_e, N_e);
 
+
+	for (int i = 0; i<r; i++) {
+		for (int j = 0; j<c; j++) {
+			if(i==0||i==1||i==2||i==r-3||i==r-2||i==r-1){
+				if(j==i){
+					K[i*r+j]=1;
+				}else{
+					K[i*r+j]=0;				
+				}
+			}
+		}
+	}
+
 	disp(r, c, K, "K");
 
 	//// Get global load vector {F} and set boundary conditions
 	//--------------------------------------------------------
 
 	get_F(r, F, r_e, F_e, N_e,Fy);
+
+	F[(r-1)/2]=F[(r-1)/2]+Fy;
+
+	F[0]=0;
+	F[1]=0;
+	F[2]=0;
+
+	F[r-3]=0;
+	F[r-2]=0;
+	F[r-1]=0;
 
 	disp(r,1,F,"F");
 
@@ -120,8 +143,8 @@ int main() {
 
 	
 
-	// cout<<endl;
- 	// 	cout<<"Solving [K]{u}={F}"<<endl;
+	// std::cout<<std::endl;
+ 	// 	std::cout<<"Solving [K]{u}={F}"<<std::endl;
 
 	// inv(K,r); //The inverse function ovverwrites the matrix [K] !
 
@@ -134,135 +157,47 @@ int main() {
 	// 	}
 	// }
 
-	// cout<<"Done!"<<endl;
+	// std::cout<<"Done!"<<std::endl;
 
- 	// cout<<endl;
+ 	// std::cout<<std::endl;
 
 	// disp(r,1,u,"u");
-
-
 
 	//// Solve the dynamic problem [M]d2{u}/dt2+[K]{u}={F}. Solution
 	//	 is performed with explicit integration method.
 	//--------------------------------------------------------
 
-	// cout<<"Solving [M]d2{u}/dt2+[K]{u}={F}"<<endl;
+	std::cout<<"Solving [M]d2{u}/dt2+[K]{u}={F}"<<std::endl;
 
-	// cout<<endl;
+	std::cout<<std::endl;
 
 
-	 double *tmp = new double[r]();
+	double *tmp = new double[r]();
 
 	
-	// for(int n_t=1;n_t<=N_t;n_t++){
+	for(int n_t=1;n_t<=N_t;n_t++){
 
-	// 	//cout<<"Iteration "<<n_t<<" t="<<t<<endl;
+		std::cout<<"Iteration "<<n_t<<" t="<<t<<std::endl;
 
-	// 	qy=t*1000.0/T;
+		qy=t*1000.0/T;
 
-	// 	Fy=t*1000.0/T;
+		Fy=t*1000.0/T;
 
-	// 	set_Fe(r_e, F_e, l,qy);
-
-	// 	get_F(r, F, r_e, F_e, N_e,Fy);
-
-
-	// 	//Get u(n+1)
-	// 	//-------------------------------
-	// 	for(int i=0;i<r;i++){
-
-	// 		tmp[i]=0;
-
-	// 		for(int j=0;j<c;j++){
-
-	// 			tmp[i]=tmp[i]-(K[i*r+j]-2.0/(dt*dt)*M[i*r+j])*u[j]-1.0/(dt*dt)*M[i*r+j]*u_p[j];
-
-	// 		}
-
-	// 		tmp[i]=tmp[i]+F[i];
-
-	// 		u_n[i]=tmp[i]*dt*dt*1.0/M[i*r+i];
-	// 	}
-
-	// 	//Set boundary conditions
-	// 	//-------------------------------
-
-	// 	u_n[0]=0;
-	// 	u_n[1]=0;
-	// 	u_n[2]=0;
-	// 	u_n[r-1]=0;
-	// 	u_n[r-2]=0;
-	// 	u_n[r-3]=0;
-
-		
-	// 	for(int i=0;i<r;i++){
-	// 		u_p[i]=u[i];
-	// 		u[i]=u_n[i];
-	// 	}
-		
-
-	// 	t=t+dt;
-
-
-	// }
-
-
-	// delete[] u_p;
-
-	// cout<<endl;
-
-	// cout<<"Done!"<<endl;
-
- 	// 	cout<<endl;
-
-	// disp(r,1,u,"u");
-	
-	
-
-	// //// Solve the dynamic problem [M]d2{u}/dt2+[K]{u}={F}. Solution
-	// //	 is performed with implicit integration method.
-	// //--------------------------------------------------------
-
-	cout<<"Solving [M]d2{u}/dt2+[K]{u}={F}"<<endl;
-
-	memset(u,0,r*sizeof(*u));
-
-	double *u_tt = new double[r]();
-	double *u_tt_n = new double[r]();
-	double *u_t = new double[r]();
-	double *u_t_n = new double[r]();
-	double *K_eff = new double[r*c]();
-
-
-	for(int i=0;i<r;i++){
-		for(int j=0;j<r;j++){
-			K_eff[i*r+j]=4.0/(dt*dt)*M[i*r+j]+K[i*r+j];
-		}
-	}
-
-	disp(r,c,K_eff,"K_eff");
-
-	inv(K_eff,r);
-
-	disp(r,c,K_eff,"K_eff");
-
-
-	cout<<endl;
-	
-	for(int n_t=1;n_t<=2;n_t++){
-
-		//cout<<"Iteration "<<n_t<<" t="<<t<<endl;
-
-		qy=(t+dt)*1000.0/T;
-
-		Fy=(t+dt)*1000.0/T;
-
-		set_Fe(r_e, F_e, l,qy);
+		set_F_e(r_e, F_e, l,qy);
 
 		get_F(r, F, r_e, F_e, N_e,Fy);
 
+		F[(r-1)/2]=F[(r-1)/2]+Fy;
 
-		//Get u_n
+		F[0]=0;
+		F[1]=0;
+		F[2]=0;
+
+		F[r-3]=0;
+		F[r-2]=0;
+		F[r-1]=0;
+
+		//Get u(n+1)
 		//-------------------------------
 		for(int i=0;i<r;i++){
 
@@ -270,33 +205,14 @@ int main() {
 
 			for(int j=0;j<c;j++){
 
-				tmp[i]=tmp[i]+M[i*r+j]*(4.0/(dt*dt)*u[j]+4.0/dt*u_t[j]+u_tt[j]);
+				tmp[i]=tmp[i]-(K[i*r+j]-2.0/(dt*dt)*M[i*r+j])*u[j]-1.0/(dt*dt)*M[i*r+j]*u_p[j];
 
 			}
 
 			tmp[i]=tmp[i]+F[i];
+
+			u_n[i]=tmp[i]*dt*dt*1.0/M[i*r+i];
 		}
-
-
-		for(int i=0;i<r;i++){
-
-			u_n[i]=0;
-
-			for(int j=0;j<c;j++){
-				u_n[i]=u_n[i]+K_eff[i*r+j]*tmp[j];
-
-			}
-
-			u_tt_n[i]=4.0/(dt*dt)*(u_n[i]-u[i])-4.0/dt*u_t[i]-u_tt[i];
-
-			u_t_n[i]=u[i]+dt*(1-0.5)*u_tt[i]+dt*0.5*u_tt_n[i];
-		}
-
-		disp(r,1,F,"F");
-		disp(r,1,tmp,"tmp");
-		disp(r,1,u_n,"u");
-		disp(r,1,u_tt_n,"u_tt");
-		disp(r,1,u_t_n,"u_t");
 
 		//Set boundary conditions
 		//-------------------------------
@@ -308,48 +224,162 @@ int main() {
 		u_n[r-2]=0;
 		u_n[r-3]=0;
 
-		u_t_n[0]=0;
-		u_t_n[1]=0;
-		u_t_n[2]=0;
-		u_t_n[r-1]=0;
-		u_t_n[r-2]=0;
-		u_t_n[r-3]=0;
-
-		u_tt_n[0]=0;
-		u_tt_n[1]=0;
-		u_tt_n[2]=0;
-		u_tt_n[r-1]=0;
-		u_tt_n[r-2]=0;
-		u_tt_n[r-3]=0;
-
 		
 		for(int i=0;i<r;i++){
+			u_p[i]=u[i];
 			u[i]=u_n[i];
-			u_t[i]=u_t_n[i];
-			u_tt[i]=u_tt_n[i];
 		}
-
-		disp(r,1,u,"u");
 		
 
 		t=t+dt;
 
+
 	}
 
 
-	delete[] u_tt;
-	delete[] u_tt_n;
-	delete[] u_t;
-	delete[] u_t_n;
-	delete[] tmp;
+	delete[] u_p;
 
-	cout<<endl;
+	std::cout<<std::endl;
 
-	cout<<"Done!"<<endl;
+	std::cout<<"Done!"<<std::endl;
 
- 	cout<<endl;
+ 	std::cout<<std::endl;
 
 	disp(r,1,u,"u");
+	
+	
+
+	//// Solve the dynamic problem [M]d2{u}/dt2+[K]{u}={F}. Solution
+	//	 is performed with implicit integration method.
+	//--------------------------------------------------------
+
+	// std::cout<<"Solving [M]d2{u}/dt2+[K]{u}={F}"<<std::endl;
+
+	// memset(u,0,r*sizeof(*u));
+
+	// double *u_tt = new double[r]();
+	// double *u_tt_n = new double[r]();
+	// double *u_t = new double[r]();
+	// double *u_t_n = new double[r]();
+	// double *K_eff = new double[r*c]();
+
+
+	// for(int i=0;i<r;i++){
+	// 	for(int j=0;j<r;j++){
+	// 		K_eff[i*r+j]=4.0/(dt*dt)*M[i*r+j]+K[i*r+j];
+	// 	}
+	// }
+
+	// disp(r,c,K_eff,"K_eff");
+
+	// inv(K_eff,r);
+
+	// disp(r,c,K_eff,"K_eff");
+
+
+	// std::cout<<std::endl;
+	
+	// for(int n_t=1;n_t<=2;n_t++){
+
+	// 	//std::cout<<"Iteration "<<n_t<<" t="<<t<<std::endl;
+
+	// 	qy=(t+dt)*1000.0/T;
+
+	// 	Fy=(t+dt)*1000.0/T;
+
+	// 	set_Fe(r_e, F_e, l,qy);
+
+	// 	get_F(r, F, r_e, F_e, N_e,Fy);
+
+
+	// 	//Get u_n
+	// 	//-------------------------------
+	// 	for(int i=0;i<r;i++){
+
+	// 		tmp[i]=0;
+
+	// 		for(int j=0;j<c;j++){
+
+	// 			tmp[i]=tmp[i]+M[i*r+j]*(4.0/(dt*dt)*u[j]+4.0/dt*u_t[j]+u_tt[j]);
+
+	// 		}
+
+	// 		tmp[i]=tmp[i]+F[i];
+	// 	}
+
+
+	// 	for(int i=0;i<r;i++){
+
+	// 		u_n[i]=0;
+
+	// 		for(int j=0;j<c;j++){
+	// 			u_n[i]=u_n[i]+K_eff[i*r+j]*tmp[j];
+
+	// 		}
+
+	// 		u_tt_n[i]=4.0/(dt*dt)*(u_n[i]-u[i])-4.0/dt*u_t[i]-u_tt[i];
+
+	// 		u_t_n[i]=u[i]+dt*(1-0.5)*u_tt[i]+dt*0.5*u_tt_n[i];
+	// 	}
+
+	// 	disp(r,1,F,"F");
+	// 	disp(r,1,tmp,"tmp");
+	// 	disp(r,1,u_n,"u");
+	// 	disp(r,1,u_tt_n,"u_tt");
+	// 	disp(r,1,u_t_n,"u_t");
+
+	// 	//Set boundary conditions
+	// 	//-------------------------------
+
+	// 	u_n[0]=0;
+	// 	u_n[1]=0;
+	// 	u_n[2]=0;
+	// 	u_n[r-1]=0;
+	// 	u_n[r-2]=0;
+	// 	u_n[r-3]=0;
+
+	// 	u_t_n[0]=0;
+	// 	u_t_n[1]=0;
+	// 	u_t_n[2]=0;
+	// 	u_t_n[r-1]=0;
+	// 	u_t_n[r-2]=0;
+	// 	u_t_n[r-3]=0;
+
+	// 	u_tt_n[0]=0;
+	// 	u_tt_n[1]=0;
+	// 	u_tt_n[2]=0;
+	// 	u_tt_n[r-1]=0;
+	// 	u_tt_n[r-2]=0;
+	// 	u_tt_n[r-3]=0;
+
+		
+	// 	for(int i=0;i<r;i++){
+	// 		u[i]=u_n[i];
+	// 		u_t[i]=u_t_n[i];
+	// 		u_tt[i]=u_tt_n[i];
+	// 	}
+
+	// 	disp(r,1,u,"u");
+		
+
+	// 	t=t+dt;
+
+	// }
+
+
+	// delete[] u_tt;
+	// delete[] u_tt_n;
+	// delete[] u_t;
+	// delete[] u_t_n;
+	// delete[] tmp;
+
+	// std::cout<<std::endl;
+
+	// std::cout<<"Done!"<<std::endl;
+
+ // 	std::cout<<std::endl;
+
+	// disp(r,1,u,"u");
 
 
 	return 0;

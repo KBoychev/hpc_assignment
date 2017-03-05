@@ -1,30 +1,30 @@
 #include "functions.h"
 
 
-void disp(int r,int c, double *m , string l) {
+void disp(int r,int c, double *m , std::string l) {
 
-	cout << endl;
+	std::cout << std::endl;
 
-	cout << setprecision(6);
+	std::cout << std::setprecision(6);
 
 	if (c == 1) {
-		cout << r << "x" << c << " {" << l << "}=" << endl;
+		std::cout << r << "x" << c << " {" << l << "}=" << std::endl;
 		for (int i = 0; i < r; i++) {
-			cout << setw(12);
-			cout << m[i];
-			cout << endl;
+			std::cout << std::setw(12);
+			std::cout << m[i];
+			std::cout << std::endl;
 		}
 	}
 	else {
-		cout << r << "x" << c << " [" << l << "]=" << endl;
+		std::cout << r << "x" << c << " [" << l << "]=" << std::endl;
 
 		for (int i = 0; i < r; i++) {
 			for (int j = 0; j < c; j++) {
-				cout << setw(12);
-				cout << m[i*r + j];
+				std::cout << std::setw(12);
+				std::cout << m[i*c + j];
 			}
-			cout << endl;
+			std::cout << std::endl;
 		}
 	}
-	cout << endl;
+	std::cout << std::endl;
 }

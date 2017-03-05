@@ -1,7 +1,7 @@
 #include "functions.h"
 
 
-void set_Me(int &r_e, int &c_e, double *Me, double &rho, double &A, double &l) {
+void set_M_e(int &r_e, int &c_e, double *Me, double &rho, double &A, double &l) {
 
 	for (int i = 0; i<r_e; i++) {
 		for (int j = i; j<c_e; j++) {
