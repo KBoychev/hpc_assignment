@@ -14,7 +14,7 @@ int main() {
 	//// Beam and element geometry and material properties
 	//--------------------------------------------------------
 
-	int N_e = 4; // - (number of elements)
+	int N_e = 26; // - (number of elements)
 	double L = 10.0; // m (beam length)
 	double l = L / N_e; //m (element length)
 
