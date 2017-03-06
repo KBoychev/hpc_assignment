@@ -56,7 +56,7 @@ int main(int argc, char* argv[]) {
 		double rho = 7850; 
 
 
-		N_e = 24; 	
+		N_e = 48; 	
 		l =L/N_e;
 		T = 1; 
 		N_t = 10000;
