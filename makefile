@@ -34,6 +34,7 @@ clean:
 	rm main.o
 	rm $(FNCSD)get_M.o
 	rm $(FNCSD)get_K.o
+	rm $(FNCSD)get_K_eff.o
 	rm $(FNCSD)get_F.o
 	rm $(FNCSD)disp.o
 	rm $(FNCSD)log.o

@@ -74,8 +74,8 @@ int main(int argc, char *argv[]) {
 		}
 	}
 
-	double l = L / N_e; //element length
-	double dt = T / ( N_t - 1); //timestep
+	double l = L / N_e; //Element length
+	double dt = T / ( N_t - 1); //Timestep
 	
 	int N_n=N_e-1; //Number of nodes
 
@@ -132,7 +132,7 @@ int main(int argc, char *argv[]) {
 
 		disp(n,1,F,"F");
 
-		// Get u
+		// Get u 
 		//------------------------------	
 
 		char dpbsv_uplo='U';
@@ -172,28 +172,34 @@ int main(int argc, char *argv[]) {
 			n_p=3*((N_n-1)/2+1);
 		}
 
-		std::cout<<n_p<<std::endl;
+		
 
 
-		double *MPI_BUFF = new double[3](); //buffer of {u} to keep values of displacement for one node
+		double *MPI_BUFF = new double[3](); //Buffer for exchanging data between the two processes. Size of 3 as we have 3 degrees of freedom at the common node.
+
+		// Define pointers but do not initialise them yet!
+		// The pointers are initialised when the appropriate scheme is selected.
+		// The rest of the pointers that are not used for a particular scheme are discarded.
+		// ------------------------------------------------------------------
 
 		double *u; // {u} at timelayer n
 		double *u_p; // {u} at timelayer n+1
 		double *u_p_k;
 		double *u_m; // {u} at timelayer n+1
-		double *u_tt; // second time derivative of {u} at timelayer n
-		double *u_tt_p; // second time derivative of {u} at timelayer n+1
-		double *u_t; // first time derivative of {u} at timelayer n
-		double *u_t_p; // first time derivative of {u} at timelayer n+1
+		double *u_tt; // Second time derivative of {u} at timelayer n
+		double *u_tt_p; // Second time derivative of {u} at timelayer n+1
+		double *u_t; // First time derivative of {u} at timelayer n
+		double *u_t_p; // First time derivative of {u} at timelayer n+1
 		double *tmp = new double[n_p]();
 		double *b;
-		double R=0;
-		int k=0;
+		double R; //Residual for iterative method
+		int k; //Iteration of iterative method
 
 
 		if(sch==0){
 
-			delete u_p_k;
+
+			delete u_p_k;	
 			delete u_tt;
 			delete u_tt_p;
 			delete u_t;
@@ -220,6 +226,9 @@ int main(int argc, char *argv[]) {
 			u_t_p=new double[n_p]();
 			b=new double[n_p]();
 
+			// Get K_eff
+			// ----------------------------------
+			
 			get_K_eff(dt,M,n,K);	
 
 			if(MPI_P_ID==0){
