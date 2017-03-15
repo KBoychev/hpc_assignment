@@ -1,30 +1,29 @@
 #include "functions.h"
 
 
-void get_K(int &r, int &c, double *K, int &r_e, double *K_e, int &N) {
+void get_K(double &E, double &A,  double &I, double &l, int &n_k, double *K, int &N_n) {
 
+	for(int n_n=0;n_n<N_n;n_n++){	
 
-	int i_e=0;
-	int j_e=0;
+		if(n_n<N_n-1){
 
-	for(int n=1;n<=N;n++){
+			K[0*n_k+(3*n_n+5)]=(6.0*E*I)/(l*l);
+			K[1*n_k+(3*n_n+3)]=-(A*E)/l;
+			K[1*n_k+(3*n_n+4)]=-(12.0*E*I)/(l*l*l);
+			K[1*n_k+(3*n_n+5)]=(2.0*E*I) / l;
+			K[2*n_k+(3*n_n+4)]=-(6.0*E*I)/(l*l);
 
-		i_e=0;
-
-		for(int i=(3*n-3);i<3*(n+1);i++){
-
-			j_e=0;
-
-			for(int j=(3*n-3);j<3*(n+1);j++){
-
-					K[i*r+j]=K_e[i_e*r_e+j_e]+K[i*r+j];
-
-					j_e++;
-			}
-
-			i_e++;
+			K[6*n_k+(3*n_n+2)]=-(6.0*E*I)/(l*l);
+			K[7*n_k+(3*n_n)]=-(A*E)/l;
+			K[7*n_k+(3*n_n+1)]=-(12.0*E*I)/(l*l*l);
+			K[7*n_k+(3*n_n+2)]=(2.0*E*I) / l;
+			K[8*n_k+(3*n_n+1)]=(6.0*E*I)/(l*l);
+			
 		}
 
+		K[4*n_k+(3*n_n)]=2*(A*E)/l;
+		K[4*n_k+(3*n_n+1)]=2*(12.0*E*I)/(l*l*l);
+		K[4*n_k+(3*n_n+2)]=2*(4.0*E*I)/l;
 	}
 
 }

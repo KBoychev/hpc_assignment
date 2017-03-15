@@ -1,26 +1,19 @@
 #include "functions.h"
 
 
-void get_F(int &r, double *F, int &r_e, double *F_e, int &N,double &Fy) {
+void get_F(double &t, double &T, double &l, double *F, int &N_n) {
 
+	for(int n_n=0;n_n<N_n;n_n++){
 
-	for(int i=0;i<r;i++){
-		F[i]=0;
-	}
+		F[3*n_n+0]=0;
 
-	int n = 1;
-	int i_e=0;
-
-	for(int n=1;n<=N;n++){
-
-		i_e=0;
-
-		for(int i=(3*n-3);i<3*(n+1);i++){
-
-			F[i]=F_e[i_e]+F[i];
-
-			i_e++;
+		if(n_n==(N_n-1)/2){			
+			F[3*n_n+1]=t*1000.0/T*(l+1);
+		}else{
+			F[3*n_n+1]=t*1000.0/T*l;
 		}
+
+		F[3*n_n+2]=0;
 
 	}
 
