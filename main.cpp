@@ -5,11 +5,23 @@
 #include <string>
 
 
-#include <Accelerate/Accelerate.h>
 
 
+#include "cblas.h"
 #include "mpi.h"
 #include "functions.h"
+
+
+using namespace std;
+
+
+#define F77NAME(x) x##_
+extern "C" {
+    void F77NAME(dpbsv) (const char& uplo, const int& n, const int& kd, const int& nrhs, const double * a, const int& lda, double * b, const int& ldb, int& info);                
+}
+
+
+
 
 
 int main(int argc, char *argv[]) {
@@ -42,410 +54,405 @@ int main(int argc, char *argv[]) {
 
 	for (int i=1; i<argc; i++){
 
-		if(std::strcmp(argv[i],"-L")==0){
-			L=std::atof(argv[i+1]);
+		if(strcmp(argv[i],"-L")==0){
+			L=atof(argv[i+1]);
 		}
-		if(std::strcmp(argv[i],"-N_e")==0){
-			N_e=std::stoi(argv[i+1]);
+		if(strcmp(argv[i],"-N_e")==0){
+			N_e=stoi(argv[i+1]);
 		}
-		if(std::strcmp(argv[i],"-A")==0){
-			A=std::stod(argv[i+1]);
+		if(strcmp(argv[i],"-A")==0){
+			A=stod(argv[i+1]);
 		}
-		if(std::strcmp(argv[i],"-I")==0){
-			I=std::stod(argv[i+1]);	
+		if(strcmp(argv[i],"-I")==0){
+			I=stod(argv[i+1]);	
 		}
-		if(std::strcmp(argv[i],"-E")==0){
-			E=std::stod(argv[i+1]);	
+		if(strcmp(argv[i],"-E")==0){
+			E=stod(argv[i+1]);	
 		}
-		if(std::strcmp(argv[i],"-T")==0){
-			T=std::stod(argv[i+1]);
+		if(strcmp(argv[i],"-T")==0){
+			T=stod(argv[i+1]);
 		}
-		if(std::strcmp(argv[i],"-N_t")==0){
-			N_t=std::stoi(argv[i+1]);
+		if(strcmp(argv[i],"-N_t")==0){
+			N_t=stoi(argv[i+1]);
 		}
-		if(std::strcmp(argv[i],"-rho")==0){
-			rho=std::stod(argv[i+1]);
+		if(strcmp(argv[i],"-rho")==0){
+			rho=stod(argv[i+1]);
 		}
-		if(std::strcmp(argv[i],"-eq")==0){
-			eq=std::stoi(argv[i+1]);
+		if(strcmp(argv[i],"-eq")==0){
+			eq=stoi(argv[i+1]);
 		}
-		if(std::strcmp(argv[i],"-sch")==0){
-			sch=std::stoi(argv[i+1]);
+		if(strcmp(argv[i],"-sch")==0){
+			sch=stoi(argv[i+1]);
 		}
 	}
 
 	double l = L / N_e; //Element length
+
 	double dt = T / ( N_t - 1); //Timestep
+
+
 	
-	int N_n=N_e-1; //Number of nodes
+	if(MPI_N_P==1){
 
-	int n = 3*N_n; //Dimension of global mass matrices [M], [K], and vector {F}
+		int N_n=N_e-1; //Number of nodes
 
-	//// Global mass [M], stiffness [K], and force {F} matrices 
-	//	 and vector
-	//--------------------------------------------------------
+		int n = 3*N_n; //Dimension of global mass matrices [M], [K], and vector {F}
 
-	double *M = new double[n](); // Global mass matrix [M] (Banded)
-	double *K = new double[9*n](); // Global stiffness matrix [K] (Banded)
-	double *F = new double[n](); //Global force vector {F}
+		//// Global mass [M], stiffness [K], and force {F} matrices 
+		//	 and vector
+		//--------------------------------------------------------
 
-	//// Get and display global mass matrix [M]
-	//--------------------------------------------------------
+		double *M = new double[n](); // Global mass matrix [M] (Banded)
+		double *K = new double[5*n](); // Global stiffness matrix [K] (Banded)
+		double *F = new double[n](); //Global force vector {F}
 
-	get_M(rho,A,l,M,N_n);
+		//// Get and display global mass matrix [M]
+		//--------------------------------------------------------
 
-	if(MPI_P_ID==0){
+		get_M(rho,A,l,M,N_n);
 
 		disp(1,n,M,"M");
 
-	}
+		//// Get and display global stiffness matrix [K]
+		//--------------------------------------------------------
 
-	//// Get and display global stiffness matrix [K]
-	//--------------------------------------------------------
+		get_K(E,A,I,l,n,K,N_n);
 
-	get_K(E,A,I,l,n,K,N_n);
-
-	if(MPI_P_ID==0){
-		disp(9,n, K, "K");
-	}
-
-	//// Solve the static problem [K]{u}={F}
-	//--------------------------------------------------------
-
-	if(eq==0){	
-			
-		std::cout<<std::endl;
-	 	std::cout<<"Solving [K]{u}={F}"<<std::endl;
-
-	 	// Global displacement vector {u}
-		//------------------------------
-
-	 	double *u = new double[n](); 
-
-		// Get and display the global force vector {F} at time t=1s.
-		// ------------------------------
-		
-		t=1;
-		T=1;
-
-		get_F(t,T,l,F,N_n);
-
-		disp(n,1,F,"F");
-
-		// Get u 
-		//------------------------------	
-
-		char dpbsv_uplo='U';
-		int dpbsv_kd=4;
-		int dpbsv_nrhs=1;
-		int dpbsv_ldk=5;
-		int dpbsv_info;
-
-		dpbsv_(&dpbsv_uplo,&n,&dpbsv_kd,&dpbsv_nrhs,K,&dpbsv_ldk,F,&n,&dpbsv_info);
-
-		std::cout<<dpbsv_info<<std::endl;
-
-		// Store and display u 
-		//------------------------------
-
-		log(n,u,"task_static.log");
-
- 		std::cout<<std::endl<<"Done!"<<std::endl;
-
-		disp(n,1,u,"u");
-
-	}
-
-	//// Solve the dynamic problem [M]d2{u}/dt2+[K]{u}={F} on
-	// 	 one or two processes.
-	//--------------------------------------------------------
-
-	if(eq==1){
-
-		int n_p;
-
-		if(MPI_N_P==1){
-			n_p=3*N_n;
-		}
-
-		if(MPI_N_P==2){
-			n_p=3*((N_n-1)/2+1);
-		}
+		disp(5,n, K, "K");
 
 		
+		//// Solve the static problem [K]{u}={F}
+		//--------------------------------------------------------
 
-
-		double *MPI_BUFF = new double[3](); //Buffer for exchanging data between the two processes. Size of 3 as we have 3 degrees of freedom at the common node.
-
-		// Define pointers but do not initialise them yet!
-		// The pointers are initialised when the appropriate scheme is selected.
-		// The rest of the pointers that are not used for a particular scheme are discarded.
-		// ------------------------------------------------------------------
-
-		double *u; // {u} at timelayer n
-		double *u_p; // {u} at timelayer n+1
-		double *u_p_k;
-		double *u_m; // {u} at timelayer n+1
-		double *u_tt; // Second time derivative of {u} at timelayer n
-		double *u_tt_p; // Second time derivative of {u} at timelayer n+1
-		double *u_t; // First time derivative of {u} at timelayer n
-		double *u_t_p; // First time derivative of {u} at timelayer n+1
-		double *tmp = new double[n_p]();
-		double *b;
-		double R; //Residual for iterative method
-		int k; //Iteration of iterative method
-
-
-		if(sch==0){
-
-
-			delete u_p_k;	
-			delete u_tt;
-			delete u_tt_p;
-			delete u_t;
-			delete u_t_p;
-			delete b;
-
-			u=new double[n_p]();
-			u_p=new double[n_p]();
-			u_m=new double[n_p]();
-
-
-		}
-
-		if(sch==1){
-
-			delete u_m;
-
-			u=new double[n_p]();
-			u_p=new double[n_p]();
-			u_p_k=new double[n_p]();
-			u_tt=new double[n_p]();
-			u_tt_p=new double[n_p]();
-			u_t=new double[n_p]();
-			u_t_p=new double[n_p]();
-			b=new double[n_p]();
-
-			// Get K_eff
-			// ----------------------------------
-			
-			get_K_eff(dt,M,n,K);	
-
-			if(MPI_P_ID==0){
-				disp(9,n,K,"K_eff");
-			}
-
-		}
-
-
-		if(MPI_P_ID==0){
-			std::cout<<"Solving [M]d2{u}/dt2+[K]{u}={F}"<<std::endl;
-			std::cout<<std::endl;
-		}
-		
-
-		//Loop for N_t timesteps
-		//-------------------------------
-
-		t=0;
-
-		for(int n_t=0;n_t<=N_t;n_t++){
-
-
-			//Explicit scheme
-			//-------------------------------
-
-			if(sch==0){
-
-				get_F(t,T,l,F,N_n);
+		if(eq==0){	
 				
-				for(int j=0;j<n_p;j++){
+			cout<<endl;
+		 	cout<<"Solving [K]{u}={F}"<<endl;
 
-					tmp[j]=0;
+		 	// Global displacement vector {u}
+			//------------------------------
 
-					for(int i=0;i<9;i++){
+		 	double *u = new double[n](); 
 
-						if(j<4){
-							if(i>(3-j) && i!=4){
-								tmp[j]-=K[i*n+j]*u[i-(4-j)];
-							}
-						}
-
-						if(j>=4 && j<(n_p-4)){
-							if(i!=4){
-								tmp[j]-=K[i*n+j]*u[i+(j-4)];
-							}
-
-						}
-
-						if(j>=(n_p-4)){
-							if(i<(4+(n_p-j))&& i!=4){
-								tmp[j]-=K[i*n+j]*u[n_p-(4+(n_p-j))+i];
-							}
-						}
-					}			
-				}
-
-				
-
-				//mpi stuff;
-
-				if(MPI_N_P==2 && MPI_P_ID==0){
-
-					MPI_BUFF[0]=tmp[n_p-3];
-					MPI_BUFF[1]=tmp[n_p-2];
-					MPI_BUFF[2]=tmp[n_p-1];
-
-					MPI_Send(MPI_BUFF,3,MPI_DOUBLE,1,0,MPI_COMM_WORLD);
-				}
-
-				if(MPI_N_P==2 && MPI_P_ID==1){
-
-					MPI_BUFF[0]=tmp[0];
-					MPI_BUFF[1]=tmp[1];
-					MPI_BUFF[2]=tmp[2];
-
-					MPI_Send(MPI_BUFF,3,MPI_DOUBLE,0,0,MPI_COMM_WORLD);				
-				}
-
-				if(MPI_N_P==2 && MPI_P_ID==1){
-
-					MPI_Recv(MPI_BUFF,3,MPI_DOUBLE,0,0,MPI_COMM_WORLD,MPI_STATUS_IGNORE);
-
-					tmp[0]+=MPI_BUFF[0];
-					tmp[1]+=MPI_BUFF[1];
-					tmp[2]+=MPI_BUFF[2];	
-
-				}
+			// Get and display the global force vector {F} at time t=1s.
+			// ------------------------------
 			
-				if(MPI_N_P==2 && MPI_P_ID==0){
+			t=1;
+			T=1;
 
-					MPI_Recv(MPI_BUFF,3,MPI_DOUBLE,1,0,MPI_COMM_WORLD,MPI_STATUS_IGNORE);
+			get_F(t,T,l,F,N_n);
 
-					tmp[n_p-3]+=MPI_BUFF[0];
-					tmp[n_p-2]+=MPI_BUFF[1];
-					tmp[n_p-1]+=MPI_BUFF[2];
-				}
+			disp(n,1,F,"F");
 
 
-				for(int i=0;i<n_p;i++){
+			rmjr(5,n,K);
 
-					tmp[i]+=-K[4*n+i]*u[i]; //diagonal 
+			// Get u 
+			//------------------------------	
 
-					if(MPI_N_P==2 && MPI_P_ID==0){
-						tmp[i]+=F[i]+2.0/(dt*dt)*M[i]*u[i]-1.0/(dt*dt)*M[i]*u_m[i]; 
-					}
-
-					if(MPI_N_P==2 && MPI_P_ID==1){
-						tmp[i]+=F[3*(N_e/2-1)+i]+2.0/(dt*dt)*M[i]*u[i]-1.0/(dt*dt)*M[i]*u_m[i];
-					}
-
-				    if(MPI_N_P==1){
-				    	
-				    	tmp[i]+=F[i]+2.0/(dt*dt)*M[i]*u[i]-1.0/(dt*dt)*M[i]*u_m[i];
-				    }
-			
-					u_p[i]=tmp[i]*dt*dt*1.0/M[i];
-				}
+			int dpbsv_info=0;
 
 
-				for(int i=0;i<n_p;i++){
-					u_m[i]=u[i];					
-					u[i]=u_p[i];
-				}
+		    cblas_dcopy(n,F,1,u,1);
 
-				t=t+dt;
-			}
+		    F77NAME(dpbsv)('U',n,4,1,K,5,u,n,dpbsv_info);
+
+		    
+		    if (dpbsv_info) {
+		        cout << "Solution error "<< dpbsv_info <<" !"<< endl;
+		    }
+
+			// Store and display u 
+			//------------------------------
+
+			log(n,u,"task_static.log");
+
+	 		cout<<endl<<"Done!"<<endl;
+
+			disp(n,1,u,"u");
+
+		}
+
+		//// Solve the dynamic problem [M]d2{u}/dt2+[K]{u}={F} on
+		// 	 one process.
+		//--------------------------------------------------------
+
+		if(eq==1){
+
+				//Explicit scheme
+				//-------------------------------
+
+				if(sch==0){
+
+					std::cout<<"Solving [M]d2{u}/dt2+[K]{u}={F} with explicit scheme"<<std::endl;
+					std::cout<<std::endl;
 
 
-			//Implicit scheme (Jacobi iterations)
-			//-------------------------------
-			if(sch==1){
+					rmjr(5,n,K);
 
-				t=t+dt;
+					double *u = new double[n]();
+					double *u_p = new double[n]();
+					double *u_m = new double[n]();
+					double *tmp = new double[n]();
 
-				get_F(t,T,l,F,N_n);
+					t=0;
 
-				k=0;
-				R=1;
+					for(int n_t=0;n_t<=N_t;n_t++){
+		
+						get_F(t,T,l,F,N_n);
 
-				while(R>1*std::pow(10,-12)){
 
-					for(int j=0;j<n_p;j++){
+						cblas_dsbmv(CblasColMajor,CblasUpper,n,4,-dt*dt,K,5,u,1,0.0,tmp,1);
 
-						tmp[j]=0;
+						for(int i=0;i<n;i++){
+							tmp[i]+=dt*dt*(F[i]+2.0/(dt*dt)*M[i]*u[i]-1.0/(dt*dt)*M[i]*u_m[i]);
+							u_p[i]=tmp[i]/M[i];
 
-						for(int i=0;i<9;i++){
-
-							if(j<4){
-								if(i>(3-j) && i!=4){
-									tmp[j]+=K[i*n+j]*u_p[i-(4-j)];
-								}
-							}
-
-							if(j>=4 && j<(n-4)){
-								if(i!=4){
-									tmp[j]+=K[i*n+j]*u_p[i+(j-4)];
-								}
-							}
-
-							if(j>=(n-4)){
-								if(i<(4+(n-j)) && i!=4){
-									tmp[j]+=K[i*n+j]*u_p[n_p-(4+(n_p-j))+i];
-								}
-							}
 						}
-						b[j]=F[j]+M[j]*(1.0/(0.25*dt*dt)*u[j]+1.0/(0.25*dt)*u_t[j]+(1.0/(2.0*0.25)-1.0)*u_tt[j]);
+
+						cblas_dcopy(n,u,1,u_m,1);
+						cblas_dcopy(n,u_p,1,u,1);
+
+						t=t+dt;
 					}
 
 
-					for(int i=0;i<n_p;i++){
-						u_p_k[i]=1/K[4*n+i]*(b[i]-tmp[i]);
-					}
+					log(n,u,"task_dynamic_explicit.log");
+
+	 				cout<<endl<<"Done!"<<endl;
+
+					disp(n,1,u,"u");
 					
-					R=0;
+				}
 
-					for(int i=0;i<n_p;i++){
-						R+=u_p_k[i]-u_p[i];					
+
+				//Implicit scheme (Jacobi iterations)
+				//-------------------------------
+				if(sch==1){
+
+
+					int dpbsv_info=0;
+
+
+					std::cout<<"Solving [M]d2{u}/dt2+[K]{u}={F} with implicit scheme"<<std::endl;
+					std::cout<<std::endl;
+
+					get_K_eff(dt,M,n,K);
+
+					disp(5,n,K,"K_eff");
+
+					rmjr(5,n,K);
+
+					double *u = new double[n]();
+					double *u_p = new double[n]();
+					double *u_t = new double[n]();
+					double *u_t_p = new double[n]();
+					double *u_tt = new double[n]();
+					double *u_tt_p = new double[n]();
+					double *tmp = new double[n]();
+					double *K_tmp = new double[5*n]();
+
+					cblas_dcopy(5*n,K,1,K_tmp,1);
+
+					t=0;
+
+					for(int n_t=0;n_t<=N_t;n_t++){
+
+						t=t+dt;
+
+						get_F(t,T,l,F,N_n);
+
+						for(int i=0;i<n;i++){
+							tmp[i]=F[i]+M[i]*(1.0/(0.25*dt*dt)*u[i]+1.0/(0.25*dt)*u_t[i]+(1.0/(2.0*0.25)-1.0)*u_tt[i]);
+						}
+
+		    			cblas_dcopy(n,tmp,1,u_p,1);
+
+		    			cblas_dcopy(5*n,K,1,K_tmp,1);
+
+		    			F77NAME(dpbsv)('U',n,4,1,K_tmp,5,u_p,n,dpbsv_info);
+
+		    			if (dpbsv_info) {
+					        cout << "Solution error "<< dpbsv_info <<" !"<< endl;
+					    }
+
+						for(int i=0;i<n;i++){
+							u_tt_p[i]=1.0/(0.25*dt*dt)*(u_p[i]-u[i])-1.0/(0.25*dt)*u_t[i]-(1.0/(2.0*0.25)-1.0)*u_tt[i];  
+		    				u_t_p[i]=u_t[i]+dt*0.5*u_tt[i]+dt*0.5*u_tt_p[i];
+						}
+
+					    cblas_dcopy(n,u_p,1,u,1);
+						cblas_dcopy(n,u_t_p,1,u_t,1);
+						cblas_dcopy(n,u_tt_p,1,u_tt,1);
+
+						
 					}
 
-					R=std::abs(R);
 
-					for(int i=0;i<n_p;i++){
-						u_p[i]=u_p_k[i];
-					}
+					log(n,u,"task_dynamic_implicit.log");
 
-					k++;
+	 				cout<<endl<<"Done!"<<endl;
+
+					disp(n,1,u,"u");
+
+
 				}
-
-				for(int i=0;i<n_p;i++){
-					u_tt_p[i]=1.0/(0.25*dt*dt)*(u_p[i]-u[i])-1.0/(0.25*dt)*u_t[i]-(1.0/(2.0*0.25)-1.0)*u_tt[i];  
-    				u_t_p[i]=u_t[i]+dt*0.5*u_tt[i]+dt*0.5*u_tt_p[i];
-				}
-
-
-				for(int i=0;i<n_p;i++){
-					u[i]=u_p[i];
-					u_t[i]=u_t_p[i];
-					u_tt[i]=u_tt_p[i];
-				}
-
-			}
-
 
 		}
 
+	}
 
-		//Display u and write u to file 
-		//-------------------------------
+
+	if(MPI_N_P==2){
+
+		int N_n=(N_e-2)/2+1; //Number of nodes
+
+		int n = 3*N_n; //Dimension of global mass matrices [M], [K], and vector {F}
+
+
+		//// Global mass [M], stiffness [K], and force {F} matrices 
+		//	 and vector
+		//--------------------------------------------------------
+
+		double *M = new double[n](); // Global mass matrix [M] (Banded)
+		double *K = new double[5*n](); // Global stiffness matrix [K] (Banded)
+		double *F = new double[n](); //Global force vector {F}
+
+		//// Get and display global mass matrix [M]
+		//--------------------------------------------------------
+
+		get_M(rho,A,l,M,N_n);
+
 		if(MPI_P_ID==0){
 
-			log(n,u,"task_dynamic.log");
-			
-			std::cout<<std::endl<<"Done!"<<std::endl;
+			disp(1,n,M,"M");
 
-			disp(n_p,1,u,"u");
-			
+		}
+
+		//// Get and display global stiffness matrix [K]
+		//--------------------------------------------------------
+
+		get_K(E,A,I,l,n,K,N_n);
+
+		if(MPI_P_ID==0){
+			disp(5,n,K,"K");
+		}
+
+		//// Solve the dynamic problem [M]d2{u}/dt2+[K]{u}={F} on
+		// 	 one two processes.
+		//--------------------------------------------------------
+
+		if(eq==1){
+
+
+				//Explicit scheme
+				//-------------------------------
+
+				if(sch==0){
+
+					if(MPI_P_ID==0){
+						std::cout<<"Solving [M]d2{u}/dt2+[K]{u}={F} with explicit scheme on two processes"<<std::endl;
+						std::cout<<std::endl;
+					}
+
+
+					rmjr(5,n,K);
+
+					double *MPI_BUFF = new double[3]();
+					double *u = new double[n]();
+					double *u_p = new double[n]();
+					double *u_m = new double[n]();
+					double *tmp = new double[n]();
+
+					t=0;
+
+					for(int n_t=0;n_t<=N_t;n_t++){
+
+						get_F(t,T,l,F,N_n);
+
+						cblas_dsbmv(CblasColMajor,CblasUpper,n,4,-dt*dt,K,5,u,1,0.0,tmp,1);
+
+						if(MPI_N_P==2 && MPI_P_ID==0){
+
+							MPI_BUFF[0]=tmp[n-3];
+							MPI_BUFF[1]=tmp[n-2];
+							MPI_BUFF[2]=tmp[n-1];
+
+							MPI_Send(MPI_BUFF,3,MPI_DOUBLE,1,0,MPI_COMM_WORLD);
+						}
+
+						if(MPI_N_P==2 && MPI_P_ID==1){
+
+							MPI_BUFF[0]=tmp[0];
+							MPI_BUFF[1]=tmp[1];
+							MPI_BUFF[2]=tmp[2];
+
+							MPI_Send(MPI_BUFF,3,MPI_DOUBLE,0,0,MPI_COMM_WORLD);				
+						}
+
+						if(MPI_N_P==2 && MPI_P_ID==1){
+
+							MPI_Recv(MPI_BUFF,3,MPI_DOUBLE,0,0,MPI_COMM_WORLD,MPI_STATUS_IGNORE);
+
+							tmp[0]+=MPI_BUFF[0];
+							tmp[1]+=MPI_BUFF[1];
+							tmp[2]+=MPI_BUFF[2];	
+
+						}
+					
+						if(MPI_N_P==2 && MPI_P_ID==0){
+
+							MPI_Recv(MPI_BUFF,3,MPI_DOUBLE,1,0,MPI_COMM_WORLD,MPI_STATUS_IGNORE);
+
+							tmp[n-3]+=MPI_BUFF[0];
+							tmp[n-2]+=MPI_BUFF[1];
+							tmp[n-1]+=MPI_BUFF[2];
+						}
+
+						for(int i=0;i<n;i++){
+							tmp[i]+=dt*dt*(F[i]+2.0/(dt*dt)*M[i]*u[i]-1.0/(dt*dt)*M[i]*u_m[i]);
+							u_p[i]=tmp[i]/M[i];
+						}
+
+						cblas_dcopy(n,u,1,u_m,1);
+
+						cblas_dcopy(n,u_p,1,u,1);
+
+						t=t+dt;
+					}
+
+
+
+	 				if(MPI_P_ID==0){
+
+	 					log(n,u,"task_dynamic_explicit_parallel.log");
+
+	 					cout<<endl<<"Done!"<<endl;
+
+	 					disp(n,1,u,"u");
+
+	 				}	
+					
+
+				}
+
+
+				//Setup parallel grid stuff
+				//-------------------------------
+
+
+				//Implicit scheme 
+				//-------------------------------
+
+				if(sch==1){
+
+					if(MPI_P_ID==0){
+						std::cout<<"Solving [M]d2{u}/dt2+[K]{u}={F} with implicit scheme on two processes"<<std::endl;
+						std::cout<<std::endl;
+					}
+
+				}
+
 		}
 
 	}

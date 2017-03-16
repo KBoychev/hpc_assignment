@@ -3,10 +3,8 @@
 #ifndef _funcitons_h
 #define _funcitons_h
 
-	#include <iostream>
-	#include <iomanip>
 	#include <string>
-	#include <fstream>
+	
 
 	void get_M(double &rho, double &A, double &l, double *M, int &N_n);
 
@@ -16,8 +14,10 @@
 
 	void get_K_eff(double &dt, double *M, int &n, double *K);
 
-	void disp(int,int,double*,std::string);
+	void disp(int,int,double*,std::string,int rmjr=1);
 
 	void log(int &n, double *u, std::string file);
+
+	void rmjr(int,int,double*);
 
 #endif
