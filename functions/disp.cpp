@@ -6,7 +6,7 @@
 #include "functions.h"
 
 
-void disp(int r,int c, double *m , std::string l,int rmjr) {
+void disp(int r,int c, double *m , std::string l) {
 
 	std::cout << std::endl;
 
