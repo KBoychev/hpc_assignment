@@ -7,7 +7,7 @@ default: app clean
 all: app clean
 
 app: main.o get_M.o get_K.o get_K_eff.o get_F.o disp.o log.o rmjr.o
-	$(C) main.o $(FNCSD)get_M.o $(FNCSD)get_K.o $(FNCSD)get_K_eff.o $(FNCSD)get_F.o $(FNCSD)disp.o $(FNCSD)log.o $(FNCSD)rmjr.o -lblas -llapack -o app.out
+	$(C) main.o $(FNCSD)get_M.o $(FNCSD)get_K.o $(FNCSD)get_K_eff.o $(FNCSD)get_F.o $(FNCSD)disp.o $(FNCSD)log.o $(FNCSD)rmjr.o -lscalapack-openmpi -lblacs-openmpi -lblacsCinit-openmpi -llapack -lblas -o app.out
 
 main.o: 	
 	$(C) $(CFLAGS) main.cpp -o main.o

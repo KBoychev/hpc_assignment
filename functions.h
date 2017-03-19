@@ -14,7 +14,7 @@
 
 	void get_K_eff(double &dt, double *M, int &n, double *K);
 
-	void disp(int,int,double*,std::string);
+	void disp(int,int,double*,std::string,int rmjr=1);
 
 	void log(int &n, double *u, std::string file);
 
