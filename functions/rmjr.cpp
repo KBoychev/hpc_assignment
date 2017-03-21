@@ -1,3 +1,11 @@
+////  
+// rmjr() Converts matrix from row major to column major
+// ------------------------------------------------------------------------------
+// @param r <int> - Rows
+// @param c <int> - Columns
+// @param m <double*> - Matrix/vector
+// ------------------------------------------------------------------------------
+
 #include "functions.h"
 
 

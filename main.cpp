@@ -4,7 +4,7 @@
 #include <iomanip>
 #include <string>
 #include <fstream>
-
+#include <cmath>
 
 
 #include "cblas.h"
@@ -29,10 +29,6 @@ extern "C" {
 	void Cblacs_exit(int);
 	void Cblacs_gridexit(int);  
 }
-
-
-
-
 
 int main(int argc, char *argv[]) {
 
@@ -116,8 +112,8 @@ int main(int argc, char *argv[]) {
 		//	 and vector
 		//--------------------------------------------------------
 
-		double *M = new double[n](); // Global mass matrix [M] (Banded)
-		double *K = new double[5*n](); // Global stiffness matrix [K] (Banded)
+		double *M = new double[n](); // Global mass matrix [M] (Banded symmetric)
+		double *K = new double[5*n](); // Global stiffness matrix [K] (Banded symmetric)
 		double *F = new double[n](); //Global force vector {F}
 
 		//// Get and display global mass matrix [M]
@@ -181,7 +177,7 @@ int main(int argc, char *argv[]) {
 			// Store and display u 
 			//------------------------------
 
-			log(n,u,"task_static.log");
+			log(N_n,l,u,"task_static.log");
 
 			cout<<endl<<"Done!"<<endl;
 
@@ -229,7 +225,24 @@ int main(int argc, char *argv[]) {
 						
 						get_F(t,T,l,F,N_n);
 
-						F[3*((N_n-1)/2)+1]=t*1000.0/T*(l+1);
+						for(int n_n=0;n_n<N_n;n_n++){
+
+							F[3*n_n+0]=0;
+
+							if(t<=Tl){	
+								F[3*n_n+1]=t*1000.0/Tl*l;	
+							}else{
+								F[3*n_n+1]=1000.0*l;
+							}
+
+							F[3*n_n+2]=0;
+						}
+
+						if(t<=Tl){	
+							F[3*((N_n-1)/2)+1]=t*1000.0/Tl*(l+1);
+						}else{
+							F[3*((N_n-1)/2)+1]=1000.0*(l+1);
+						}
 
 						cblas_dsbmv(CblasColMajor,CblasUpper,n,4,-dt*dt,K,5,u,1,0.0,tmp,1);
 
@@ -247,7 +260,7 @@ int main(int argc, char *argv[]) {
 
 					center_node_log_file.close();
 
-					log(n,u,"task_dynamic_explicit.log");
+					log(N_n,l,u,"task_dynamic_explicit.log");
 
 					cout<<endl<<"Done!"<<endl;
 
@@ -256,7 +269,7 @@ int main(int argc, char *argv[]) {
 				}
 
 			}
-
+			
 
 				//Implicit scheme 
 				//=============================================================
@@ -293,6 +306,8 @@ int main(int argc, char *argv[]) {
 
 					get_F(t,T,l,F,N_n);
 
+
+					
 					F[3*((N_n-1)/2)+1]=t*1000.0/T*(l+1);
 
 					for(int i=0;i<n;i++){
@@ -322,7 +337,7 @@ int main(int argc, char *argv[]) {
 				}
 
 
-				log(n,u,"task_dynamic_implicit.log");
+				log(N_n,l,u,"task_dynamic_implicit.log");
 
 				cout<<endl<<"Done!"<<endl;
 
@@ -360,8 +375,8 @@ int main(int argc, char *argv[]) {
 					//	 and vector
 					//--------------------------------------------------------
 
-					double *M = new double[n](); // Global mass matrix [M] (Banded)
-					double *K = new double[5*n](); // Global stiffness matrix [K] (Banded)
+					double *M = new double[n](); // Global mass matrix [M] (Banded symmetric)
+					double *K = new double[5*n](); // Global stiffness matrix [K] (Banded symmetric)
 					double *F = new double[n](); //Global force vector {F}
 
 					//// Get and display global mass matrix [M]
@@ -480,7 +495,7 @@ int main(int argc, char *argv[]) {
 
 					if(MPI_P_ID==0){
 
-						log(n,u,"task_dynamic_explicit_parallel.log");
+						log(N_n,l,u,"task_dynamic_explicit_parallel.log");
 
 						cout<<endl<<"Done!"<<endl;
 
@@ -491,19 +506,19 @@ int main(int argc, char *argv[]) {
 
 				}
 
-
-				
-
-
 				//Implicit scheme 
 				//=============================================================
 
 				if(sch==1){
 
-					int N_n=(N_e-1)/2; // For scalapack odd number of nodes no overlap
-					
-					int n = 3*N_n; //Dimension of global mass matrices [M], [K], and vector {F}
+					int N_n=(N_e-2)/2+1;
 
+					if(MPI_P_ID==1){
+						N_n--;// For scalapack odd number of nodes no overlap
+					}
+
+					int n = 3*N_n; //Dimension of global mass matrices [M], [K], and vector {F}
+				
 					//// Global mass [M], stiffness [K], and force {F} matrices 
 					//	 and vector
 					//--------------------------------------------------------
@@ -518,7 +533,6 @@ int main(int argc, char *argv[]) {
 					get_M(rho,A,l,M,N_n);
 
 					if(MPI_P_ID==0){
-
 						disp(1,n,M,"M");
 
 					}
@@ -529,6 +543,7 @@ int main(int argc, char *argv[]) {
 					
 
 					if(MPI_P_ID==0){
+
 						for(int n_n=0;n_n<N_n;n_n++){	
 							
 							if(n_n<N_n-1){
@@ -558,6 +573,7 @@ int main(int argc, char *argv[]) {
 					}
 
 					if(MPI_P_ID==1){
+
 						for(int n_n=0;n_n<N_n;n_n++){	
 							
 
@@ -591,7 +607,7 @@ int main(int argc, char *argv[]) {
 
 
 
-					if(MPI_P_ID==1){
+					if(MPI_P_ID==0){
 						disp(17,n,K,"K");
 					}
 
@@ -611,28 +627,29 @@ int main(int argc, char *argv[]) {
 					Cblacs_gridinfo(ctx,&nrow,&ncol,&myrow,&mycol);
 
 					int desc_K[7];
-					desc_K[0]=501;
-					desc_K[1]=ctx;
-					desc_K[2]=2*n;
-					desc_K[3]=n;
-					desc_K[4]=0;
-					desc_K[5]=17;
-					desc_K[6]=0;
+					desc_K[0]=501; //Type is banded matrix 1-by-P (LHS)
+					desc_K[1]=ctx; //Context
+					desc_K[2]=3*(N_e-1); //Problem size
+					desc_K[3]=3*((N_e-2)/2+1); //Blocking
+					desc_K[4]=0; //Process row/column
+					desc_K[5]=17; //Local size
+					desc_K[6]=0; //Reserved
 
-					int desc_u_p[7];
-					desc_u_p[0]=502;
-					desc_u_p[1]=ctx;
-					desc_u_p[2]=2*n;
-					desc_u_p[3]=n;
-					desc_u_p[4]=0;
-					desc_u_p[5]=n;
-					desc_u_p[6]=0;
+					int desc_u_p[7]; 
+					desc_u_p[0]=502; //Type is banded matrix P-by-1 (RHS)
+					desc_u_p[1]=ctx; //Context
+					desc_u_p[2]=3*(N_e-1); //Problem size
+					desc_u_p[3]=3*((N_e-2)/2+1); //Blocking
+					desc_u_p[4]=0; //Process row/column
+					desc_u_p[5]=3*((N_e-2)/2+1); //Local size
+					desc_u_p[6]=0; //Reserved
 
 					
-					int *ipiv=new int[2*n];
-					int lwork=(n+4)*(4+4)+6*(4+4)*(4+2*4)+(n+2*4+4*4);
-					double *work=new double[lwork];
-					int info;
+					int *ipiv=new int[3*(N_e-1)]; //Ipiv
+					int lwork=(3*((N_e-2)/2+1)+4)*(4+4)+6*(4+4)*(4+2*4)+max(1*(3*((N_e-2)/2+1)+2*4+4*4),1); // Work size
+					double *work=new double[lwork]; // Work
+
+					int info; //Info
 
 					if(MPI_P_ID==0){
 						std::cout<<"Solving [M]d2{u}/dt2+[K]{u}={F} with implicit scheme on two processes"<<std::endl;
@@ -643,7 +660,7 @@ int main(int argc, char *argv[]) {
 						K[(4+8)*n+j]+=4.0/(dt*dt)*M[j];
 					}
 
-					if(MPI_P_ID==1){
+					if(MPI_P_ID==0){
 						disp(17,n,K,"K_eff");
 					}
 
@@ -670,9 +687,6 @@ int main(int argc, char *argv[]) {
 							F[3*(N_n-1)+1]=t*1000.0/T*(l+1);
 						}
 
-						if(MPI_P_ID==1){
-							F[3*0+1]=t*1000.0/T*(l+1);
-						}
 						
 						for(int i=0;i<n;i++){
 							tmp[i]=F[i]+M[i]*(1.0/(0.25*dt*dt)*u[i]+1.0/(0.25*dt)*u_t[i]+(1.0/(2.0*0.25)-1.0)*u_tt[i]);
@@ -682,13 +696,30 @@ int main(int argc, char *argv[]) {
 
 						cblas_dcopy(17*n,K,1,K_tmp,1);
 
-						F77NAME(pdgbsv)(2*n,4,4,1,K_tmp,0,desc_K,ipiv,u_p,0,desc_u_p,work,lwork,info);        
 
-						if(MPI_P_ID==0){
-							if (info) {
-								cout << "Solution error "<< info <<" !"<< endl;
-							}    
-						}
+						//Solve the system K_tml * u_p'=u_p (i.e. RHS vector replaced by soltion)
+
+						//Problem size
+						//Number of subdiagonals
+						//Number of superdiagonals
+						//Number of RHS
+						//Matrix
+						//Matrix index
+						//Matrix descriptor
+						//Ipiv
+						//Vector
+						//Vector index
+						//Vector descriptor
+						//Work
+						//Size of work
+						//Info
+						
+						F77NAME(pdgbsv)(3*(N_e-1),4,4,1,K_tmp,1,desc_K,ipiv,u_p,1,desc_u_p,work,lwork,info);
+
+						if (info) {
+							cout << "Solution error "<< info <<" !"<< endl;
+						}  
+						
 
 						for(int i=0;i<n;i++){
 							u_tt_p[i]=1.0/(0.25*dt*dt)*(u_p[i]-u[i])-1.0/(0.25*dt)*u_t[i]-(1.0/(2.0*0.25)-1.0)*u_tt[i];  
@@ -705,7 +736,7 @@ int main(int argc, char *argv[]) {
 
 					if(MPI_P_ID==0){
 
-						log(n,u,"task_dynamic_implicit_parallel.log");
+						log(N_n,l,u,"task_dynamic_implicit_parallel.log");
 
 						cout<<endl<<"Done!"<<endl;
 

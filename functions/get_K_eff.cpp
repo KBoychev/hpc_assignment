@@ -1,3 +1,12 @@
+////  
+// get_K_eff() Populates the elements of the effective stiffness matrix [K_eff]. 
+// ------------------------------------------------------------------------------
+// @param dt <double> - Stepsize (s)
+// @param M <double*> - Mass matrix 
+// @param n <int> - Degrees of freedom
+// @param K <double*> - Stiffness matrix (Banded symmetric storage)
+// ------------------------------------------------------------------------------
+
 #include "functions.h"
 
 

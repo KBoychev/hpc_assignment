@@ -1,3 +1,13 @@
+////  
+// get_M() Populates the elements of the mass matrix [M]. 
+// ------------------------------------------------------------------------------
+// @param rho <double> - Density (kg/m^3)
+// @param A <double> - Cross-section area (m^2)
+// @param l <double> - Element length (m)
+// @param M <double*> - Mass matrix (Banded symmetric storage)
+// @param N_n <int> - Number of nodes
+// ------------------------------------------------------------------------------
+
 #include "functions.h"
 
 

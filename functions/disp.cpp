@@ -1,3 +1,11 @@
+////  
+// disp() Dispays matrix or vector in a MALTAB style fashion. 
+// ------------------------------------------------------------------------------
+// @param r <int> - Rows
+// @param c <int> - Columns
+// @param m <double*> - Matrix/vector
+// @param l <string> - Matrix/vector label
+// ------------------------------------------------------------------------------
 
 #include <iostream>
 #include <iomanip>
@@ -6,7 +14,7 @@
 #include "functions.h"
 
 
-void disp(int r,int c, double *m , std::string l,int rmjr) {
+void disp(int r,int c, double *m , std::string l) {
 
 	std::cout << std::endl;
 

@@ -1,5 +1,12 @@
-
-
+////  
+// get_F() Populates the elements of the force vector {F}. 
+// ------------------------------------------------------------------------------
+// @param t <double> - Time (s)
+// @param T <double> - Period (s)
+// @param l <double> - Element length (m)
+// @param F <double*> - Force vector 
+// @param N_n <int> - Number of nodes
+// ------------------------------------------------------------------------------
 
 #include "functions.h"
 

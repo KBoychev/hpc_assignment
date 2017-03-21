@@ -44,17 +44,17 @@ clean:
 	rm $(FNCSD)rmjr.o
 
 task1:
-	time ./app.out -L 10.0 -N_e 24 -A 0.012 -I 0.0000144 -E 210000000000.0 -N_t 12000.0 -rho 7850.0 -eq 0 -sch 0
+	time ./app.out -L 10.0 -N_e 6 -A 0.012 -I 0.0000144 -E 210000000000.0 -eq 0
 
 task2:
-	time ./app.out -L 10.0 -N_e 24 -A 0.012 -I 0.0000144 -E 210000000000.0 -T 1.0 -N_t 20000.0 -rho 7850.0 -eq 1 -sch 0
+	time ./app.out -L 10.0 -N_e 6 -A 0.012 -I 0.0000144 -E 210000000000.0 -T 1.0 -N_t 8000.0 -rho 7850.0 -eq 1 -sch 0
 	
 task3:
-	time ./app.out -L 10.0 -N_e 24 -A 0.012 -I 0.0000144 -E 210000000000.0 -T 1.0 -N_t 1000.0 -rho 7850.0 -eq 1 -sch 1
+	time ./app.out -L 10.0 -N_e 6 -A 0.012 -I 0.0000144 -E 210000000000.0 -T 1.0 -N_t 1000.0 -rho 7850.0 -eq 1 -sch 1
 
 task4:
-	time mpiexec -n 2 app.out -L 10.0 -N_e 24 -A 0.012 -I 0.0000144 -E 210000000000.0 -T 1.0 -N_t 20000.0 -rho 7850.0 -eq 1 -sch 0 
+	time mpiexec -n 2 app.out -L 10.0 -N_e 6 -A 0.012 -I 0.0000144 -E 210000000000.0 -T 1.0 -N_t 8000.0 -rho 7850.0 -eq 1 -sch 0 
 
 task5:
-	time mpiexec -n 2 app.out -L 10.0 -N_e 24 -A 0.012 -I 0.0000144 -E 210000000000.0 -T 1.0 -N_t 1000.0 -rho 7850.0 -eq 1 -sch 1
+	time mpiexec -n 2 app.out -L 10.0 -N_e 6 -A 0.012 -I 0.0000144 -E 210000000000.0 -T 1.0 -N_t 1000.0 -rho 7850.0 -eq 1 -sch 1
 

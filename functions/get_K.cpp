@@ -1,3 +1,15 @@
+////  
+// Populates the elements of the stiffness matrix [K]. 
+// ------------------------------------------------------------------------------
+// @param E <double> - Young's modulus (Pa)
+// @param A <double> - Cross-section area (m^2)
+// @param I <double> - Second moment of area (m^4)
+// @param l <double> - Element length (m)
+// @param n <int> - Degrees of freedom
+// @param K <double*> - Stiffness matrix (Banded symmetric storage)
+// @param N_n <int> - Number of nodes
+// ------------------------------------------------------------------------------
+
 
 #include "functions.h"
 
