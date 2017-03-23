@@ -177,7 +177,7 @@ int main(int argc, char *argv[]) {
 			}
 
 			//Save results to file and display them
-			log(N_n,l,u,"task_static.log");
+			log(N_n,l,u,"results/task_static.log");
 
 			cout<<endl<<"Done!"<<endl;
 
@@ -201,7 +201,7 @@ int main(int argc, char *argv[]) {
 				//Open a new file to store the center node y displacement with respect to time
 				std::ofstream center_node_log_file;
 
-				center_node_log_file.open("explicit_center_node_defletion_wtr_time.log");
+				center_node_log_file.open("results/explicit_center_node_defletion_wtr_time.log");
 
 				if(center_node_log_file.good()){
 					
@@ -262,7 +262,7 @@ int main(int argc, char *argv[]) {
 					center_node_log_file.close();
 
 					//Save results to file and display them
-					log(N_n,l,u,"task_dynamic_explicit.log");
+					log(N_n,l,u,"results/task_dynamic_explicit.log");
 
 					cout<<endl<<"Done!"<<endl;
 
@@ -281,7 +281,7 @@ int main(int argc, char *argv[]) {
 				//Open a new file to store the center node y displacement with respect to time
 				std::ofstream center_node_log_file;
 
-				center_node_log_file.open("implicit_center_node_defletion_wtr_time.log");
+				center_node_log_file.open("results/implicit_center_node_defletion_wtr_time.log");
 
 				if(center_node_log_file.good()){
 
@@ -371,7 +371,7 @@ int main(int argc, char *argv[]) {
 					center_node_log_file.close();
 
 					//Save results to file and display them
-					log(N_n,l,u,"task_dynamic_implicit.log");
+					log(N_n,l,u,"results/task_dynamic_implicit.log");
 
 					cout<<endl<<"Done!"<<endl;
 
@@ -562,7 +562,7 @@ int main(int argc, char *argv[]) {
 						N_n=N_e;
 						n=3*N_n;
 
-						log(N_n,l,MPI_u,"task_dynamic_explicit_parallel.log");
+						log(N_n,l,MPI_u,"results/task_dynamic_explicit_parallel.log");
 
 						cout<<endl<<"Done!"<<endl;
 
@@ -749,7 +749,7 @@ int main(int argc, char *argv[]) {
 						N_n=N_e-1;
 						n=3*N_n;
 
-						log(N_n,l,MPI_u,"task_dynamic_implicit_parallel.log");
+						log(N_n,l,MPI_u,"results/task_dynamic_implicit_parallel.log");
 
 						cout<<endl<<"Done!"<<endl;
 

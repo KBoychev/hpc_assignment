@@ -25,7 +25,7 @@ L=10
 qy=1000
 Fy=1000
 
-x,u2=load_csv_file("task_static.log")
+x,u2=load_csv_file("results/task_static.log")
 
 u2_a=[]
 for i in range(0,len(x)):
@@ -39,7 +39,7 @@ plt.xlabel('x (m)')
 plt.ylabel('u2 (m)')
 plt.legend()
 plt.grid(True)
-plt.savefig("task1.png")
+plt.savefig("results/task1.png")
 
 
 
@@ -48,12 +48,12 @@ plt.savefig("task1.png")
 
 
 
-t,u2_T=load_csv_file("explicit_center_node_defletion_wtr_time_TleqT.log")
-t,u2_05T=load_csv_file("explicit_center_node_defletion_wtr_time_Tleq05T.log")
-t,u2_06T=load_csv_file("explicit_center_node_defletion_wtr_time_Tleq06T.log")
-t,u2_07T=load_csv_file("explicit_center_node_defletion_wtr_time_Tleq07T.log")
-t,u2_08T=load_csv_file("explicit_center_node_defletion_wtr_time_Tleq08T.log")
-t,u2_09T=load_csv_file("explicit_center_node_defletion_wtr_time_Tleq09T.log")
+t,u2_T=load_csv_file("results/explicit_center_node_defletion_wtr_time_TleqT.log")
+t,u2_05T=load_csv_file("results/explicit_center_node_defletion_wtr_time_Tleq05T.log")
+t,u2_06T=load_csv_file("results/explicit_center_node_defletion_wtr_time_Tleq06T.log")
+t,u2_07T=load_csv_file("results/explicit_center_node_defletion_wtr_time_Tleq07T.log")
+t,u2_08T=load_csv_file("results/explicit_center_node_defletion_wtr_time_Tleq08T.log")
+t,u2_09T=load_csv_file("results/explicit_center_node_defletion_wtr_time_Tleq09T.log")
 
 plt.figure(1)
 plt.plot(t,u2_T,linestyle='-',color = '#1c4587',label='Tl=T')
@@ -66,7 +66,7 @@ plt.xlabel('t (s)')
 plt.ylabel('u2 at L/2 (m)')
 plt.legend()
 plt.grid(True)
-plt.savefig("task2.png")
+plt.savefig("results/task2.png")
 
 
 
@@ -99,19 +99,19 @@ plt.loglog(Tl,u2_amp,linestyle='-',color = '#1c4587')
 plt.xlabel('Tl (s)')
 plt.ylabel('amplitude of u2 at L/2 (m)')
 plt.grid(True)
-plt.savefig("task2_amplitude.png")
+plt.savefig("results/task2_amplitude.png")
 
 
 ## Task3
 # -------------------------------------------------
 
 
-t,u2_T=load_csv_file("implicit_center_node_defletion_wtr_time_TleqT.log")
-t,u2_05T=load_csv_file("implicit_center_node_defletion_wtr_time_Tleq05T.log")
-t,u2_06T=load_csv_file("implicit_center_node_defletion_wtr_time_Tleq06T.log")
-t,u2_07T=load_csv_file("implicit_center_node_defletion_wtr_time_Tleq07T.log")
-t,u2_08T=load_csv_file("implicit_center_node_defletion_wtr_time_Tleq08T.log")
-t,u2_09T=load_csv_file("implicit_center_node_defletion_wtr_time_Tleq09T.log")
+t,u2_T=load_csv_file("results/implicit_center_node_defletion_wtr_time_TleqT.log")
+t,u2_05T=load_csv_file("results/implicit_center_node_defletion_wtr_time_Tleq05T.log")
+t,u2_06T=load_csv_file("results/implicit_center_node_defletion_wtr_time_Tleq06T.log")
+t,u2_07T=load_csv_file("results/implicit_center_node_defletion_wtr_time_Tleq07T.log")
+t,u2_08T=load_csv_file("results/implicit_center_node_defletion_wtr_time_Tleq08T.log")
+t,u2_09T=load_csv_file("results/implicit_center_node_defletion_wtr_time_Tleq09T.log")
 
 plt.figure(3)
 plt.plot(t,u2_T,linestyle='-',color = '#1c4587',label='Tl=T')
@@ -124,7 +124,7 @@ plt.xlabel('t (s)')
 plt.ylabel('u2 at L/2 (m)')
 plt.legend()
 plt.grid(True)
-plt.savefig("task3.png")
+plt.savefig("results/task3.png")
 
 
 
@@ -157,7 +157,7 @@ plt.plot(Tl,u2_amp,linestyle='-',color = '#1c4587')
 plt.xlabel('Tl (s)')
 plt.ylabel('amplitude of u2 at L/2  (m)')
 plt.grid(True)
-plt.savefig("task3_amplitude.png")
+plt.savefig("results/task3_amplitude.png")
 
 
 
@@ -165,8 +165,9 @@ plt.savefig("task3_amplitude.png")
 # -------------------------------------------------
 
 
-x,u2=load_csv_file("task_dynamic_explicit.log")
-x1,u2_p=load_csv_file("task_dynamic_explicit_parallel.log")
+x,u2=load_csv_file("results/task_dynamic_explicit.log")
+x1,u2_p=load_csv_file("results/task_dynamic_explicit_parallel.log")
+
 
 plt.figure(6)
 plt.plot(x,u2,linestyle='-',color = '#1c4587',label='Serial')
@@ -175,15 +176,15 @@ plt.xlabel('x (m)')
 plt.ylabel('u2 (m)')
 plt.legend()
 plt.grid(True)
-plt.savefig("task4.png")
+plt.savefig("results/task4.png")
 
 
 
 ## Task5
 # -------------------------------------------------
 
-x,u2=load_csv_file("task_dynamic_implicit.log")
-x,u2_p=load_csv_file("task_dynamic_implicit_parallel.log")
+x,u2=load_csv_file("results/task_dynamic_implicit.log")
+x,u2_p=load_csv_file("results/task_dynamic_implicit_parallel.log")
 
 plt.figure(7)
 plt.plot(x,u2,linestyle='-',color = '#1c4587',label='Serial')
@@ -192,6 +193,6 @@ plt.xlabel('x (m)')
 plt.ylabel('u2 (m)')
 plt.legend()
 plt.grid(True)
-plt.savefig("task5.png")
+plt.savefig("results/task5.png")
 
 

@@ -33,13 +33,13 @@
 	// get_F() Populates the elements of the force vector {F}. 
 	// ------------------------------------------------------------------------------
 	// @param t <double> - Time (s)
-	// @param T <double> - Period (s)
+	// @param Tl <double> - Loading period (s)
 	// @param l <double> - Element length (m)
 	// @param F <double*> - Force vector 
 	// @param N_n <int> - Number of nodes
 	// ------------------------------------------------------------------------------
 
-	void get_F(double &t, double &T, double &l, double *F, int &N_n);
+	void get_F(double &t, double &Tl, double &l, double *F, int &N_n);
 
 	///////////////////////////////////////////////////////////////////////////////////  
 	// get_K_eff() Populates the elements of the effective stiffness matrix [K_eff]. 
