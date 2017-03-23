@@ -16,9 +16,6 @@
 
 void get_K(double &E, double &A,  double &I, double &l, int &n, double *K, int &N_n) {
 
-
-	
-
 	for(int n_n=0;n_n<N_n;n_n++){	
 
 		if(n_n<N_n-1){

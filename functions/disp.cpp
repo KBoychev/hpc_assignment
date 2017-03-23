@@ -22,6 +22,7 @@ void disp(int r,int c, double *m , std::string l) {
 
 	if (c == 1) {
 		std::cout << r << "x" << c << " {" << l << "}=" << std::endl;
+		
 		for (int i = 0; i < r; i++) {
 			std::cout << std::setw(12);
 			std::cout << m[i];
