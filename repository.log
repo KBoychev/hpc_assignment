@@ -1,0 +1,428 @@
+commit 0138ee625eed371f0616dc6a98c00c328a0ef866
+Author: kboychev <boichev7@gmail.com>
+Date:   Thu Mar 23 16:43:10 2017 +0000
+
+    Created results folder.
+
+M	app.out
+D	center_node_defletion_wtr_time.log
+M	functions.h
+M	functions/get_F.cpp
+M	main.cpp
+A	results/Thumbs.db
+R100	explicit_center_node_defletion_wtr_time.log	results/explicit_center_node_defletion_wtr_time.log
+R100	explicit_center_node_defletion_wtr_time_Tleq05T.log	results/explicit_center_node_defletion_wtr_time_Tleq05T.log
+R100	explicit_center_node_defletion_wtr_time_Tleq06T.log	results/explicit_center_node_defletion_wtr_time_Tleq06T.log
+R100	explicit_center_node_defletion_wtr_time_Tleq07T.log	results/explicit_center_node_defletion_wtr_time_Tleq07T.log
+R100	explicit_center_node_defletion_wtr_time_Tleq08T.log	results/explicit_center_node_defletion_wtr_time_Tleq08T.log
+R100	explicit_center_node_defletion_wtr_time_Tleq09T.log	results/explicit_center_node_defletion_wtr_time_Tleq09T.log
+R100	explicit_center_node_defletion_wtr_time_TleqT.log	results/explicit_center_node_defletion_wtr_time_TleqT.log
+R100	implicit_center_node_defletion_wtr_time.log	results/implicit_center_node_defletion_wtr_time.log
+R100	implicit_center_node_defletion_wtr_time_Tleq05T.log	results/implicit_center_node_defletion_wtr_time_Tleq05T.log
+R100	implicit_center_node_defletion_wtr_time_Tleq06T.log	results/implicit_center_node_defletion_wtr_time_Tleq06T.log
+R100	implicit_center_node_defletion_wtr_time_Tleq07T.log	results/implicit_center_node_defletion_wtr_time_Tleq07T.log
+R100	implicit_center_node_defletion_wtr_time_Tleq08T.log	results/implicit_center_node_defletion_wtr_time_Tleq08T.log
+R100	implicit_center_node_defletion_wtr_time_Tleq09T.log	results/implicit_center_node_defletion_wtr_time_Tleq09T.log
+R100	implicit_center_node_defletion_wtr_time_TleqT.log	results/implicit_center_node_defletion_wtr_time_TleqT.log
+R100	task1.png	results/task1.png
+R100	task2.png	results/task2.png
+R100	task2_amplitude.png	results/task2_amplitude.png
+R100	task3.png	results/task3.png
+R100	task3_amplitude.png	results/task3_amplitude.png
+R100	task4.png	results/task4.png
+R100	task5.png	results/task5.png
+R100	task_dynamic_explicit_parallel.log	results/task_dynamic_explicit.log
+R097	task_dynamic_explicit.log	results/task_dynamic_explicit_parallel.log
+R100	task_dynamic_implicit.log	results/task_dynamic_implicit.log
+R100	task_dynamic_implicit_parallel.log	results/task_dynamic_implicit_parallel.log
+R100	task_static.log	results/task_static.log
+R071	plots.py	results_plots.py
+D	task_dynamic.log
+
+commit ef842a37ede91bb796bd95f4a47cd4e6b7a386dd
+Author: kboychev <boichev7@gmail.com>
+Date:   Thu Mar 23 16:15:21 2017 +0000
+
+    Almost done. Make final checks. Probably add Fe, Me, and Ke?
+
+M	app.out
+M	explicit_center_node_defletion_wtr_time.log
+M	explicit_center_node_defletion_wtr_time_Tleq05T.log
+M	explicit_center_node_defletion_wtr_time_Tleq06T.log
+M	explicit_center_node_defletion_wtr_time_Tleq07T.log
+M	explicit_center_node_defletion_wtr_time_Tleq08T.log
+M	explicit_center_node_defletion_wtr_time_Tleq09T.log
+M	explicit_center_node_defletion_wtr_time_TleqT.log
+M	functions.h
+M	functions/disp.cpp
+M	functions/get_F.cpp
+M	functions/get_K.cpp
+M	functions/get_K_eff.cpp
+M	functions/get_M.cpp
+M	functions/log.cpp
+R072	functions/rmjr.cpp	functions/rm2cm.cpp
+M	implicit_center_node_defletion_wtr_time.log
+M	implicit_center_node_defletion_wtr_time_Tleq05T.log
+M	implicit_center_node_defletion_wtr_time_Tleq06T.log
+M	implicit_center_node_defletion_wtr_time_Tleq07T.log
+M	implicit_center_node_defletion_wtr_time_Tleq08T.log
+M	implicit_center_node_defletion_wtr_time_Tleq09T.log
+M	implicit_center_node_defletion_wtr_time_TleqT.log
+M	main.cpp
+M	makefile
+D	plots.m
+A	plots.py
+A	task1.png
+A	task2.png
+A	task2_amplitude.png
+A	task3.png
+A	task3_amplitude.png
+A	task4.png
+A	task5.png
+M	task_dynamic_explicit_parallel.log
+
+commit 868d12cc1112b41307ba7fe89f916cdc269581b3
+Author: kboychev <boichev7@gmail.com>
+Date:   Thu Mar 23 01:24:47 2017 +0000
+
+    All tasks done. Results stored in log files.
+
+D	BACKUP.zip
+M	app.out
+A	explicit_center_node_defletion_wtr_time.log
+A	explicit_center_node_defletion_wtr_time_Tleq05T.log
+A	explicit_center_node_defletion_wtr_time_Tleq06T.log
+A	explicit_center_node_defletion_wtr_time_Tleq07T.log
+A	explicit_center_node_defletion_wtr_time_Tleq08T.log
+A	explicit_center_node_defletion_wtr_time_Tleq09T.log
+A	explicit_center_node_defletion_wtr_time_TleqT.log
+M	functions/disp.cpp
+M	functions/get_F.cpp
+M	functions/get_K.cpp
+A	implicit_center_node_defletion_wtr_time.log
+A	implicit_center_node_defletion_wtr_time_Tleq05T.log
+A	implicit_center_node_defletion_wtr_time_Tleq06T.log
+A	implicit_center_node_defletion_wtr_time_Tleq07T.log
+A	implicit_center_node_defletion_wtr_time_Tleq08T.log
+A	implicit_center_node_defletion_wtr_time_Tleq09T.log
+A	implicit_center_node_defletion_wtr_time_TleqT.log
+M	main.cpp
+M	makefile
+M	plots.m
+M	task_dynamic_explicit.log
+M	task_dynamic_explicit_parallel.log
+M	task_dynamic_implicit.log
+M	task_dynamic_implicit_parallel.log
+M	task_static.log
+
+commit 675e2465c7d2bf56188753ac79025728ebf0e0c4
+Author: kboychev <boichev7@gmail.com>
+Date:   Tue Mar 21 18:05:07 2017 +0000
+
+    All tasks done.
+
+M	app.out
+M	center_node_defletion_wtr_time.log
+M	functions.h
+M	functions/disp.cpp
+M	functions/get_F.cpp
+M	functions/get_K.cpp
+M	functions/get_K_eff.cpp
+M	functions/get_M.cpp
+M	functions/log.cpp
+M	functions/rmjr.cpp
+M	main.cpp
+M	makefile
+A	plots.m
+M	task_dynamic_explicit.log
+M	task_dynamic_explicit_parallel.log
+M	task_dynamic_implicit.log
+M	task_dynamic_implicit_parallel.log
+M	task_static.log
+
+commit 9ddba4217339dd70d809cad1ce49970b15f21e15
+Author: kboychev <boichev7@gmail.com>
+Date:   Sun Mar 19 20:03:25 2017 +0000
+
+    All tasks done. Plotting results and code formatting todo.
+
+A	app.out
+A	center_node_defletion_wtr_time.log
+M	functions.h
+M	functions/disp.cpp
+D	functions/disp.o
+M	functions/get_F.cpp
+D	functions/get_F.o
+M	functions/get_K.cpp
+D	functions/get_K.o
+D	functions/get_K_eff.o
+M	functions/get_M.cpp
+D	functions/get_M.o
+D	functions/log.o
+D	functions/rmjr.o
+M	main.cpp
+D	main.o
+M	makefile
+A	task_dynamic_implicit_parallel.log
+
+commit 7ad3762465989ce217b666f01f6dfd7330f67106
+Author: kboychev <boichev7@gmail.com>
+Date:   Thu Mar 16 16:58:57 2017 +0000
+
+    Removed col major disp fuctionality.
+
+M	functions.h
+M	functions/disp.cpp
+
+commit eaa5792d97d9079a741bf4a44fc1cbfab7101864
+Author: kboychev <boichev7@gmail.com>
+Date:   Thu Mar 16 16:55:48 2017 +0000
+
+    Code rewritten to take advantage of Blas and Lapack libraries. Task 5 left.
+
+M	BACKUP.zip
+D	BACKUP1.zip
+D	app.out
+M	functions.h
+M	functions/disp.cpp
+A	functions/disp.o
+M	functions/get_F.cpp
+A	functions/get_F.o
+M	functions/get_K.cpp
+A	functions/get_K.o
+M	functions/get_K_eff.cpp
+M	functions/get_K_eff.o
+M	functions/get_M.cpp
+A	functions/get_M.o
+M	functions/log.cpp
+A	functions/log.o
+A	functions/rmjr.cpp
+A	functions/rmjr.o
+M	main.cpp
+A	main.o
+M	makefile
+A	task_dynamic_explicit.log
+A	task_dynamic_explicit_parallel.log
+A	task_dynamic_implicit.log
+M	task_static.log
+
+commit 4f64328d7cfc704d5e2882723c50b5aeb8d0c38b
+Author: kboychev <boichev7@gmail.com>
+Date:   Wed Mar 15 01:11:13 2017 +0000
+
+    Code cleanup.
+
+M	functions.h
+M	functions/get_K.cpp
+M	functions/get_K_eff.cpp
+M	main.cpp
+M	makefile
+
+commit c62665af57f416872a3af6f2e25b2a6e09a8dbed
+Author: kboychev <boichev7@gmail.com>
+Date:   Wed Mar 15 01:03:04 2017 +0000
+
+    Task 4 finished. Rewriting code in order to make it more opimised.
+
+A	BACKUP.zip
+A	BACKUP1.zip
+A	app.out
+M	functions.h
+M	functions/get_F.cpp
+M	functions/get_K.cpp
+A	functions/get_K_eff.cpp
+A	functions/get_K_eff.o
+M	functions/get_M.cpp
+D	functions/inv.cpp
+A	functions/log.cpp
+D	functions/set_F_e.cpp
+D	functions/set_K_e.cpp
+D	functions/set_M_e.cpp
+M	main.cpp
+D	main_mpi.cpp
+M	makefile
+D	makefile_mpi
+D	task.out
+D	task1.exe
+D	task1.out
+D	task4.out
+A	task_dynamic.log
+A	task_static.log
+
+commit cfde78c6c0f73c31eaba276356eb8cbea6e4ae7a
+Author: kboychev <boichev7@gmail.com>
+Date:   Tue Mar 7 21:22:34 2017 +0000
+
+    Added command line parameter input.
+
+D	functions/disp.o
+D	functions/inv.o
+M	main.cpp
+M	main_mpi.cpp
+M	makefile
+A	task.out
+A	task1.exe
+M	task1.out
+M	task4.out
+
+commit 6d63b5f49406c7930cf8b79e7410afd7f338bae1
+Author: kboychev <boichev7@gmail.com>
+Date:   Mon Mar 6 00:12:18 2017 +0000
+
+    Fixed makefile and deleted old files.
+
+D	functions/get_M.o
+D	functions/set_F_e.o
+D	functions/set_K_e.o
+D	functions/set_M_e.o
+M	main.cpp
+D	main.o
+M	main_mpi.cpp
+M	task1.out
+D	task3.out
+M	task4.out
+
+commit b3e15523c554a245fd287e80f3a172eb06f9dfa0
+Author: kboychev <boichev7@gmail.com>
+Date:   Mon Mar 6 00:07:49 2017 +0000
+
+    Fixed makefile_mpi and removed unnecessary files used in previous versions.
+
+A	functions/get_M.o
+A	functions/set_F_e.o
+A	functions/set_K_e.o
+A	functions/set_M_e.o
+A	main.o
+M	main_mpi.cpp
+M	makefile_mpi
+
+commit cd8c5834c6c7dc6d7de7c7284eaeece5844119b1
+Author: kboychev <boichev7@gmail.com>
+Date:   Mon Mar 6 00:02:07 2017 +0000
+
+    Task 4 done and verified with analytical solution. Parallelism works. Need to clear and format code.
+
+D	functions/get_F_p.cpp
+D	functions/get_K_p.cpp
+D	functions/get_M_p.cpp
+M	main_mpi.cpp
+M	task4.out
+
+commit 304d07f2e8fc6cf72cc2c0f47622399f6cc5b60f
+Author: kboychev <boichev7@gmail.com>
+Date:   Sun Mar 5 01:52:26 2017 +0000
+
+    Bugfixed and task 4 almost complete.
+
+M	functions.h
+M	functions/disp.cpp
+M	functions/disp.o
+M	functions/get_F.cpp
+A	functions/get_F_p.cpp
+M	functions/get_K.cpp
+A	functions/get_K_p.cpp
+A	functions/get_M_p.cpp
+M	functions/set_F_e.cpp
+M	functions/set_M_e.cpp
+M	main.cpp
+A	main_mpi.cpp
+A	makefile_mpi
+M	task1.out
+A	task3.out
+A	task4.out
+
+commit 545708bf77bef13ec55c257dd260308553bfd378
+Author: kboychev <boichev7@gmail.com>
+Date:   Thu Mar 2 22:54:30 2017 +0000
+
+    Task 3 almost finished. Results are off by 2-3 percent needs additional checking.
+
+M	functions.h
+M	functions/get_F.cpp
+M	functions/get_K.cpp
+M	functions/get_M.cpp
+A	functions/inv.cpp
+A	functions/inv.o
+M	functions/set_F_e.cpp
+M	functions/set_K_e.cpp
+M	functions/set_M_e.cpp
+D	functions/set_bc_K.cpp
+D	functions/solve.cpp
+M	main.cpp
+M	makefile
+M	task1.out
+
+commit c5d5effd7b15ddf38600d9fbe161bc23c80971c4
+Author: kboychev <boichev7@gmail.com>
+Date:   Thu Mar 2 19:23:18 2017 +0000
+
+    Task 2 complete. Verified with the analytical solution. Split code for task 1 and task 2 to solve matrix clash.
+
+M	functions/get_F.cpp
+M	functions/set_F_e.cpp
+M	main.cpp
+M	task1.out
+
+commit acc321001bbcbaa514ff027f13e04aafc0922403
+Author: kboychev <boichev7@gmail.com>
+Date:   Thu Mar 2 19:00:32 2017 +0000
+
+    Task 2 almost complete. Verify with analytical solution.
+
+M	functions.h
+M	functions/get_F.cpp
+M	functions/get_K.cpp
+M	functions/get_M.cpp
+M	main.cpp
+M	task1.out
+
+commit cd9ac1b8819d3b2874bdead74ef39149371383c3
+Author: kboychev <boichev7@gmail.com>
+Date:   Thu Mar 2 17:15:59 2017 +0000
+
+    Fixed node forces and moments. Everything agrees with the analytical solution.
+
+M	functions/set_F_e.cpp
+
+commit 1d992b5336181de85e6c067855b20c9529853447
+Author: kboychev <boichev7@gmail.com>
+Date:   Thu Mar 2 16:37:49 2017 +0000
+
+    Cleanup of main.cpp
+
+M	main.cpp
+
+commit 7cb2d84ab7ac12da3483a0c7de9043b1105b6ec1
+Author: kboychev <boichev7@gmail.com>
+Date:   Thu Mar 2 16:34:48 2017 +0000
+
+    HPC Assignment: Functions broken down in different files.
+
+A	functions.h
+A	functions/disp.cpp
+A	functions/disp.o
+A	functions/get_F.cpp
+A	functions/get_K.cpp
+A	functions/get_M.cpp
+A	functions/set_F_e.cpp
+A	functions/set_K_e.cpp
+A	functions/set_M_e.cpp
+A	functions/set_bc_K.cpp
+A	functions/solve.cpp
+M	main.cpp
+D	main.o
+M	makefile
+D	task.out
+A	task1.out
+
+commit 5854f76c2fa8b24504e35ab954e044d42daeb1ef
+Author: kboychev <boichev7@gmail.com>
+Date:   Thu Mar 2 15:57:20 2017 +0000
+
+    HPC Task 1
+
+A	.vs/hpc_assignment/v14/.suo
+A	main.cpp
+A	main.o
+A	makefile
+A	task.out

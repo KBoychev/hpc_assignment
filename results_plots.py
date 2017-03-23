@@ -49,6 +49,10 @@ plt.savefig("results/task1.png")
 
 
 t,u2_T=load_csv_file("results/explicit_center_node_defletion_wtr_time_TleqT.log")
+t,u2_01T=load_csv_file("results/explicit_center_node_defletion_wtr_time_Tleq01T.log")
+t,u2_02T=load_csv_file("results/explicit_center_node_defletion_wtr_time_Tleq02T.log")
+t,u2_03T=load_csv_file("results/explicit_center_node_defletion_wtr_time_Tleq03T.log")
+t,u2_04T=load_csv_file("results/explicit_center_node_defletion_wtr_time_Tleq04T.log")
 t,u2_05T=load_csv_file("results/explicit_center_node_defletion_wtr_time_Tleq05T.log")
 t,u2_06T=load_csv_file("results/explicit_center_node_defletion_wtr_time_Tleq06T.log")
 t,u2_07T=load_csv_file("results/explicit_center_node_defletion_wtr_time_Tleq07T.log")
@@ -69,13 +73,23 @@ plt.grid(True)
 plt.savefig("results/task2.png")
 
 
-
 T=1.0
 Nt=8000.0
 dt=T/(Nt-1.0)
 
 u2_amp=[]
 
+i=int(round(0.5/dt))
+u2_amp.append(max(u2_01T[i:])-min(u2_01T[i:]))
+
+i=int(round(0.5/dt))
+u2_amp.append(max(u2_02T[i:])-min(u2_02T[i:]))
+
+i=int(round(0.5/dt))
+u2_amp.append(max(u2_03T[i:])-min(u2_03T[i:]))
+
+i=int(round(0.5/dt))
+u2_amp.append(max(u2_04T[i:])-min(u2_04T[i:]))
 
 i=int(round(0.5/dt))
 u2_amp.append(max(u2_05T[i:])-min(u2_05T[i:]))
@@ -92,7 +106,7 @@ u2_amp.append(max(u2_08T[i:])-min(u2_08T[i:]))
 i=int(round(0.9/dt))
 u2_amp.append(max(u2_09T[i:])-min(u2_09T[i:]))
 
-Tl=[0.5,0.6,0.7,0.8,0.9];
+Tl=[0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9];
 
 plt.figure(2)
 plt.loglog(Tl,u2_amp,linestyle='-',color = '#1c4587')

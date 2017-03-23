@@ -1,4 +1,4 @@
-C=mpicxx -std=c++11
+C=mpicxx -std=c++11 -O3
 CFLAGS=-c -I./
 FNCSD=./functions/
 
@@ -62,4 +62,3 @@ task4:
 task5:
 	clear
 	mpiexec -n 2 app.out -L 10.0 -N_e 24 -A 0.012 -I 0.0000144 -E 210000000000.0 -T 1.0 -Tl 1.0 -N_t 1000.0 -rho 7850.0 -eq 1 -sch 1
-

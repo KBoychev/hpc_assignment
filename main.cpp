@@ -16,9 +16,15 @@ using namespace std;
 
 extern "C" {
 
-	void F77NAME(dpbsv) (const char& uplo, const int& n, const int& kd, const int& nrhs, const double * a, const int& lda, double * b, const int& ldb, int& info);      
+	void F77NAME(dpbsv)(const char& uplo, const int& n, const int& kd, const int& nrhs, const double * a, const int& lda, double * b, const int& ldb, int& info);      
 	
-	void F77NAME(pdpbsv)(const char& uplo,const int& n, const int& bw,const int& nrhs, const double * a, const int& ja, const int *desca, const double *b,const int &ib,const int *descb, const double *work, const int &lwork,const int& info);        
+	void F77NAME(dpbtrf)(const char& uplo, const int& n, const int& kd, const double * a, const int& lda, int& info);     
+
+	void F77NAME(dpbtrs)(const char& uplo, const int& n, const int& kd, const int& nrhs, const double * a, const int& lda, double * b, const int& ldb, int& info); 
+
+	void F77NAME(pdpbtrf)(const char& uplo,const int& n, const int& bw,const double * a, const int& ja, const int *desca, const double *af,const int &laf,const double *work, const int &lwork,const int& info);        
+
+	void F77NAME(pdpbtrs)(const char& uplo,const int& n, const int& bw,const int& nrhs, const double * a, const int& ja, const int *desca, const double *b,const int &ib,const int *descb, const double *af,const int &laf,const double *work, const int &lwork,const int& info);        
 
 	void Cblacs_get(int, int, int*);
 
@@ -148,7 +154,7 @@ int main(int argc, char *argv[]) {
 
 		 	//Variables needed for solution
 			double *u = new double[n](); //u
-			int dpbsv_info=0;
+			int info=0;
 
 			//Get F at t=1 and T=1 (this will give qy=1000 and Fy=1000)
 
@@ -170,10 +176,10 @@ int main(int argc, char *argv[]) {
 			cblas_dcopy(n,F,1,u,1);
 
 			//Solve the system [K]*{u}'={u}
-			F77NAME(dpbsv)('U',n,4,1,K,5,u,n,dpbsv_info);
+			F77NAME(dpbsv)('U',n,4,1,K,5,u,n,info);
 
-			if (dpbsv_info) {
-				cout << "Solution error "<< dpbsv_info <<" !"<< endl;
+			if (info) {
+				cout << "DPBSV error "<< info <<" !"<< endl;
 			}
 
 			//Save results to file and display them
@@ -304,17 +310,21 @@ int main(int argc, char *argv[]) {
 					double *u_tt = new double[n](); //second derivative of u at time layer n
 					double *u_tt_p = new double[n](); //second derivative of u at time layer n+1
 					double *tmp = new double[n](); //temporary storage used during computations
-					double *K_tmp = new double[5*n](); //temporary K matrix (LAPACK DPBSV changes the [K] matrix)
-					int dpbsv_info=0;
-
+					int info=0;
 
 					//Initialise time to 0
 					t=0;
 
-
 					//Display that we're solving implicit problem 
 					std::cout<<"Solving [M]d2{u}/dt2+[K]{u}={F} with implicit scheme"<<std::endl;
 					std::cout<<std::endl;
+
+
+					F77NAME(dpbtrf)('U',n, 4, K,5,info);
+
+					if (info) {
+						cout << "DPBTRF error "<< info <<" !"<< endl;
+					}
 
 					//Loop for N_t iterations
 					for(int n_t=0;n_t<=N_t;n_t++){
@@ -342,15 +352,13 @@ int main(int argc, char *argv[]) {
 
 						//Copy the right hand side into u_p
 						cblas_dcopy(n,tmp,1,u_p,1);
-						//Copy [K] into [K_tmp]
-						cblas_dcopy(5*n,K,1,K_tmp,1);
 
-						//Solve the system [K_tmp]*{u_p}'={u_p}
+						//Solve the system [K]*{u_p}'={u_p}
 
-						F77NAME(dpbsv)('U',n,4,1,K_tmp,5,u_p,n,dpbsv_info);
+						F77NAME(dpbtrs)('U',n,4,1,K, 5,u_p, n,info); 
 
-						if (dpbsv_info) {
-							cout << "Solution error "<< dpbsv_info <<" !"<< endl;
+						if (info) {
+							cout << "DPBTRS error "<< info <<" !"<< endl;
 						}
 
 						//Calculate u_tt_p and u_t_p
@@ -657,10 +665,12 @@ int main(int argc, char *argv[]) {
 					desc_u_p[5]=3*((N_e-2)/2+1); //Local size
 					desc_u_p[6]=0; //Reserved
 			
-					int lwork=(3*((N_e-2)/2+1)+4)*(4+4)+6*(4+4)*(4+2*4)+max(1*(3*((N_e-2)/2+1)+2*4+4*4),1); // Work size
-					double *work=new double[lwork]; // Work
+					int laf=(3*((N_e-2)/2+1)+2*4)*4; // laf
+					int lwork=4*4; //lwork
+					double *work=new double[lwork]; // work
+					double *af=new double[laf]; // af
+					double *af_tmp=new double[laf]; //af_tmp
 
-				
 					// Get and display the effective matrix [K_eff] ([K] is being overwritten with [K_eff])
 
 					get_K_eff(dt,M,n,K);
@@ -672,7 +682,6 @@ int main(int argc, char *argv[]) {
 					//Convert K from row major to column major (for blas and lapack libraries)
 					rm2cm(5,n,K);
 
-
 					//Variables needed for solution
 					double *u = new double[n](); //u at time layer n
 					double *u_p = new double[n](); //u at time layer n+1
@@ -681,8 +690,7 @@ int main(int argc, char *argv[]) {
 					double *u_tt = new double[n](); //second derivative of u at time layer n
 					double *u_tt_p = new double[n](); //second derivative of u at time layer n+1
 					double *tmp = new double[n](); //temporary storage used during computations
-					double *K_tmp = new double[5*n](); //temporary K matrix (SCALAPACK PDPBSV changes the [K] matrix)
-					int pdpbsv_info=0;
+					int info=0;
 
 					//Initialise time to 0
 					t=0;
@@ -692,6 +700,14 @@ int main(int argc, char *argv[]) {
 						std::cout<<"Solving [M]d2{u}/dt2+[K]{u}={F} with implicit scheme on two processes"<<std::endl;
 						std::cout<<std::endl;
 					}
+
+					F77NAME(pdpbtrf)('U',3*(N_e-1),4,K,1,desc_K,af,laf,work,lwork,info);       
+
+					cblas_dcopy(laf,af,1,af_tmp,1); 
+
+					if (info) {
+						cout << "PDPBTRF error "<< info <<" !"<< endl;
+					}  
 
 					//Loop for Nt iterations
 					for(int n_t=0;n_t<=N_t;n_t++){
@@ -714,15 +730,13 @@ int main(int argc, char *argv[]) {
 
 						//Copy the right hand side of the equation into u_p
 						cblas_dcopy(n,tmp,1,u_p,1);
-						//Copy K into K_temp
-						cblas_dcopy(5*n,K,1,K_tmp,1);
-
-						//Solve the system [K_tmp]*{u_p}'={u_p} 
 						
-						F77NAME(pdpbsv)('U',3*(N_e-1),4,1,K_tmp,1,desc_K,u_p,1,desc_u_p,work,lwork,pdpbsv_info);        
+						//Solve the system [K]*{u_p}'={u_p} 
 
-						if (pdpbsv_info) {
-							cout << "Solution error "<< pdpbsv_info <<" !"<< endl;
+						F77NAME(pdpbtrs)('U',3*(N_e-1),4,1,K,1,desc_K,u_p,1,desc_u_p,af_tmp,laf,work,lwork,info);            
+
+						if (info) {
+							cout << "PDPBTRS error "<< info <<" !"<< endl;
 						}  
 						
 						//Get u_tt_p and u_t_p
