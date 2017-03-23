@@ -1,11 +1,9 @@
-
-
 #ifndef _funcitons_h
 #define _funcitons_h
 
 	#include <string>
 	
-	////  
+	///////////////////////////////////////////////////////////////////////////////////  
 	// get_M() Populates the elements of the mass matrix [M]. 
 	// ------------------------------------------------------------------------------
 	// @param rho <double> - Density (kg/m^3)
@@ -31,7 +29,7 @@
 
 	void get_K(double &E, double &A,  double &I, double &l, int &n, double *K, int &N_n);
 
-	////  
+	///////////////////////////////////////////////////////////////////////////////////  
 	// get_F() Populates the elements of the force vector {F}. 
 	// ------------------------------------------------------------------------------
 	// @param t <double> - Time (s)
@@ -43,7 +41,7 @@
 
 	void get_F(double &t, double &T, double &l, double *F, int &N_n);
 
-	////  
+	///////////////////////////////////////////////////////////////////////////////////  
 	// get_K_eff() Populates the elements of the effective stiffness matrix [K_eff]. 
 	// ------------------------------------------------------------------------------
 	// @param dt <double> - Stepsize (s)
@@ -55,7 +53,7 @@
 	void get_K_eff(double &dt, double *M, int &n, double *K);
 
 
-	////  
+	///////////////////////////////////////////////////////////////////////////////////  
 	// disp() Dispays matrix or vector. 
 	// ------------------------------------------------------------------------------
 	// @param r <int> - Rows
@@ -66,7 +64,7 @@
 
 	void disp(int r,int c, double *m,std::string l);
 
-	////  
+	///////////////////////////////////////////////////////////////////////////////////  
 	// log() Logs vertical displacments to file
 	// ------------------------------------------------------------------------------
 	// @param N_n <int> - Number of nodes
@@ -77,14 +75,14 @@
 
 	void log(int &N_n, double &l, double *u, std::string file);
 
-	////  
-	// rmjr() Converts matrix from row major to column major
+	///////////////////////////////////////////////////////////////////////////////////  
+	// rm2cm() Converts matrix from row major to column major
 	// ------------------------------------------------------------------------------
 	// @param r <int> - Rows
 	// @param c <int> - Columns
 	// @param m <double*> - Matrix/vector
 	// ------------------------------------------------------------------------------
 
-	void rmjr(int r,int c,double *m);
+	void rm2cm(int r,int c,double *m);
 
 #endif

@@ -1,5 +1,5 @@
-////  
-// rmjr() Converts matrix from row major to column major
+///////////////////////////////////////////////////////////////////////////////////  
+// rm2cm() Converts matrix from row major to column major
 // ------------------------------------------------------------------------------
 // @param r <int> - Rows
 // @param c <int> - Columns
@@ -9,7 +9,7 @@
 #include "functions.h"
 
 
-void rmjr(int r,int c,double* m){
+void rm2cm(int r,int c,double* m){
 
 
 	double *m_tmp = new double[r*c]();

@@ -1,5 +1,5 @@
-////  
-// log() Logs vertical displacments to file
+///////////////////////////////////////////////////////////////////////////////////
+// log() Logs y displacments to file
 // ------------------------------------------------------------------------------
 // @param N_n <int> - Number of nodes
 // @param l <double> - Element length (m)
