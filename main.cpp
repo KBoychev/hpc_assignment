@@ -170,9 +170,6 @@ int main(int argc, char *argv[]) {
 
 			//Display F
 			disp(n,1,F,"F");
-
-			//Convert K from row major to column major (for BLAS and LAPACK libraries)
-			rm2cm(5,n,K);
 						
 			//Copy F into u
 			cblas_dcopy(n,F,1,u,1);
@@ -219,10 +216,6 @@ int main(int argc, char *argv[]) {
 
 				if(center_node_log_file.good()){
 					
-					
-					//Convert K from row major to column major (for BLAS and LAPACK libraries)
-					rm2cm(5,n,K);
-
 					//Variables needed for solution
 					double *u = new double[n](); //u at time layer n
 					double *u_p = new double[n](); //u at time layer n+1
@@ -299,16 +292,11 @@ int main(int argc, char *argv[]) {
 
 				if(center_node_log_file.good()){
 
-					
 					// Get and display the effective matrix [K_eff] ([K] is being overwritten with [K_eff])
 
-					get_K_eff(dt,M,n,K);
+					get_K_eff(dt,M,n,K,N_n);
 
 					disp(5,n,K,"K_eff");
-
-					//Convert K from row major to column major (for BLAS and LAPACK libraries)
-
-					rm2cm(5,n,K);
 
 					//Variables needed for solution
 					double *u = new double[n](); //u at time layer n
@@ -457,24 +445,21 @@ int main(int argc, char *argv[]) {
 
 					//If process ID is 0 change the middle node properties (so we don't add them twice during multiplication exchange between processes)
 					if(MPI_P_ID==0){
-						K[4*n+(3*(N_n-1)+0)]=(A*E)/l;
-						K[4*n+(3*(N_n-1)+1)]=(12.0*E*I)/(l*l*l);
-						K[4*n+(3*(N_n-1)+2)]=(4.0*E*I)/l;
+						K[(3*(N_n-1))*5+4]=(A*E)/l;
+						K[(3*(N_n-1)+1)*5+4]=(12.0*E*I)/(l*l*l);
+						K[(3*(N_n-1)+2)*5+4]=(4.0*E*I)/l;
 					}
 					//If process ID is 1 change the middle node properties (so we don't add them twice during multiplication exchange between processes)
 					if(MPI_P_ID==1){
-						K[4*n+0]=(A*E)/l;
-						K[4*n+1]=(12.0*E*I)/(l*l*l);
-						K[4*n+2]=(4.0*E*I)/l;
+						K[(3*0)*5+4]=(A*E)/l;
+						K[(3*0+1)*5+4]=(12.0*E*I)/(l*l*l);
+						K[(3*0+2)*5+4]=(4.0*E*I)/l;
 					}
-
-					
-					//Convert K from row major to column major (for blas and lapack libraries)
-					rm2cm(5,n,K);
 
 
 					//Variables needed for solution
 					double *MPI_BUFF = new double[3](); //MPI buffer for exchanging u values at the shared node (3 degrees of freedom)
+
 					double *u = new double[n](); //u at current time layer n
 					double *u_p = new double[n](); //u at time layer n+1
 					double *u_m = new double[n](); //u at time layer n-1
@@ -648,14 +633,15 @@ int main(int argc, char *argv[]) {
 
 					if(MPI_P_ID==1){
 
-						K[0*n+2]=(6.0*E*I)/(l*l);
 
-						K[1*n+0]=-(A*E)/l;
-						K[1*n+1]=-(12.0*E*I)/(l*l*l);
-						K[1*n+2]=(2.0*E*I) / l;
-			
-						K[2*n+1]=-(6.0*E*I)/(l*l);
-					
+						K[(3*0)*5+1]=-(A*E)/l;
+
+						K[(3*0+1)*5+1]=-(12.0*E*I)/(l*l*l);
+						K[(3*0+1)*5+2]=-(6.0*E*I)/(l*l);
+
+						K[(3*0+2)*5]=(6.0*E*I)/(l*l);
+						K[(3*0+2)*5+1]=(2.0*E*I) / l;
+
 					}
 
 
@@ -702,14 +688,12 @@ int main(int argc, char *argv[]) {
 
 					// Get and display the effective matrix [K_eff] ([K] is being overwritten with [K_eff])
 
-					get_K_eff(dt,M,n,K);
+					get_K_eff(dt,M,n,K,N_n);
 
 					if(MPI_P_ID==0){
 						disp(5,n,K,"K_eff");
 					}
 
-					//Convert K from row major to column major (for blas and lapack libraries)
-					rm2cm(5,n,K);
 
 					//Variables needed for solution
 					double *u = new double[n](); //u at time layer n

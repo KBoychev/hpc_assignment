@@ -59,7 +59,7 @@ void disp(int r,int c, double *m , std::string l) {
 
 				for (int j = k_min; j < k_max; j++) {
 					std::cout << std::setw(12);
-					std::cout << m[i*c+j];
+					std::cout << m[j*r+i];
 				}
 
 				std::cout << std::endl;

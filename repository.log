@@ -1,3 +1,23 @@
+commit d3a152ed5c137158b44527afec55daab15d05716
+Author: kboychev <boichev7@gmail.com>
+Date:   Fri Mar 24 16:39:28 2017 +0000
+
+    Done...
+
+M	app.out
+M	main.cpp
+R087	results_plots.py	plot_results.py
+M	report.pdf
+M	repository.log
+M	results/Thumbs.db
+A	results/implicit_center_node_defletion_wtr_time_Tleq01T.log
+A	results/implicit_center_node_defletion_wtr_time_Tleq02T.log
+A	results/implicit_center_node_defletion_wtr_time_Tleq03T.log
+A	results/implicit_center_node_defletion_wtr_time_Tleq04T.log
+M	results/task3_amplitude.png
+M	results/task4.png
+M	results/task_dynamic_explicit_parallel.log
+
 commit e4c8a1629eb11b3f51453d7b5a77982282f3e6e4
 Author: kboychev <boichev7@gmail.com>
 Date:   Thu Mar 23 19:11:04 2017 +0000

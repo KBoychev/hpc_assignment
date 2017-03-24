@@ -48,9 +48,10 @@
 	// @param M <double*> - Mass matrix 
 	// @param n <int> - Degrees of freedom
 	// @param K <double*> - Stiffness matrix (Banded symmetric storage)
+	// @param N_n <int> - Number of nodes
 	// ------------------------------------------------------------------------------
 
-	void get_K_eff(double &dt, double *M, int &n, double *K);
+	void get_K_eff(double &dt, double *M, int &n, double *K, int &N_n);
 
 
 	///////////////////////////////////////////////////////////////////////////////////  
@@ -75,14 +76,5 @@
 
 	void log(int &N_n, double &l, double *u, std::string file);
 
-	///////////////////////////////////////////////////////////////////////////////////  
-	// rm2cm() Converts matrix from row major to column major
-	// ------------------------------------------------------------------------------
-	// @param r <int> - Rows
-	// @param c <int> - Columns
-	// @param m <double*> - Matrix/vector
-	// ------------------------------------------------------------------------------
-
-	void rm2cm(int r,int c,double *m);
 
 #endif
