@@ -79,6 +79,11 @@ int main(int argc, char *argv[]) {
 		}
 		if(strcmp(argv[i],"-N_e")==0){
 			N_e=stoi(argv[i+1]);
+			if(N_e%2!=0){
+				std::cout<<"Please use an even number of elements!"<<std::endl;
+				MPI_Finalize();
+				return 0;
+			}
 		}
 		if(strcmp(argv[i],"-A")==0){
 			A=stod(argv[i+1]);
@@ -124,17 +129,14 @@ int main(int argc, char *argv[]) {
 
 		int n = 3*N_n; //Dimension of global mass matrices [M], [K], and vector {F}
 
+		// IT IS NOT EFFICIENT TO CREATE THE ELEMENT MATRICES FIRST AND THEN THE GLOBAL MATRICES
+		// GENERATE GLOBAL MATRICES WITHOUT USING ELEMENT MATRICES
+
 		// Mass [M], stiffness [K], and force {F} matrices and vector
 
 		double *M = new double[n](); // Mass matrix [M] (Banded symmetric)
 		double *K = new double[5*n](); // Stiffness matrix [K] (Banded symmetric)
 		double *F = new double[n](); //Force vector {F}
-
-		// Get and display mass matrix [M]
-
-		get_M(rho,A,l,M,N_n);
-
-		disp(1,n,M,"M");
 
 		// Get and display stiffness matrix [K]
 
@@ -197,6 +199,12 @@ int main(int argc, char *argv[]) {
 		//---------------------------------------------------------------------------------
 
 		if(eq==1){
+
+			// Get and display mass matrix [M]
+
+			get_M(rho,A,l,M,N_n);
+
+			disp(1,n,M,"M");
 
 			///////////////////////////////////////////////////////////////////////////////////
 			// Explicit scheme
@@ -413,15 +421,17 @@ int main(int argc, char *argv[]) {
 
 			if(sch==0){
 
-					double *MPI_u = new double[3*N_e]; //MPI array to store the displacements from the two processes after finishing
+					double *MPI_u = new double[3*(N_e-1)]; //MPI array to store the displacements from the two processes after finishing
 
 					int N_n=(N_e-2)/2+1; //Number of nodes
 
 					int n = 3*N_n; //Dimension of mass matrices [M], [K], and vector {F}
 
-					//// Mass [M], stiffness [K], and force {F} matrices 
-					//	 and vector
-					//--------------------------------------------------------
+
+					// IT IS NOT EFFICIENT TO CREATE THE ELEMENT MATRICES FIRST AND THEN THE GLOBAL MATRICES
+					// GENERATE GLOBAL MATRICES WITHOUT USING ELEMENT MATRICES
+
+					// Mass [M], stiffness [K], and force {F} matrices and vector
 
 					double *M = new double[n](); // Mass matrix [M] (Banded symmetric)
 					double *K = new double[5*n](); // Stiffness matrix [K] (Banded symmetric)
@@ -560,14 +570,33 @@ int main(int argc, char *argv[]) {
 					}
 
 
-					//Gather u from the processes
-					MPI_Gather(u,n,MPI_DOUBLE,MPI_u,n,MPI_DOUBLE,0,MPI_COMM_WORLD);
+
+					//Gather u from the processes and remove overlap
+					
+					if(MPI_P_ID==0){
+
+						MPI_Gather(u,n,MPI_DOUBLE,MPI_u,n,MPI_DOUBLE,0,MPI_COMM_WORLD);
+
+					}else{
+
+						//Remove overlapping results (i.e. remove center node results from process id 1 and gather)
+						double *u_tmp=new double[n-3]();
+
+						for(int i=0;i<n;i++){
+							if(i>2){
+								u_tmp[i-3]=u[i];
+							}
+						}
+					
+
+						MPI_Gather(u_tmp,n-3,MPI_DOUBLE,MPI_u,n-3,MPI_DOUBLE,0,MPI_COMM_WORLD);
+					}
 
 
 					//If process ID is 0 save results to file and display them
 					if(MPI_P_ID==0){
 
-						N_n=N_e;
+						N_n=N_e-1;
 						n=3*N_n;
 
 						log(N_n,l,MPI_u,"results/task_dynamic_explicit_parallel.log");
