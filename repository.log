@@ -1,3 +1,20 @@
+commit f5d75e72184056173e87956bb0ffd0943ca0cc6f
+Author: kboychev <boichev7@gmail.com>
+Date:   Fri Mar 24 17:52:35 2017 +0000
+
+    Code cleanup done. All tasks done.
+
+M	app.out
+M	functions.h
+M	functions/disp.cpp
+M	functions/get_K.cpp
+M	functions/get_K_eff.cpp
+D	functions/rm2cm.cpp
+M	main.cpp
+M	makefile
+M	report.pdf
+M	repository.log
+
 commit d3a152ed5c137158b44527afec55daab15d05716
 Author: kboychev <boichev7@gmail.com>
 Date:   Fri Mar 24 16:39:28 2017 +0000

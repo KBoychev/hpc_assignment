@@ -55,6 +55,8 @@ int main(int argc, char *argv[]) {
 
 	MPI_status = MPI_Comm_rank(MPI_COMM_WORLD,&MPI_P_ID);
 
+	
+
 	///////////////////////////////////////////////////////////////////////////////////
 	// Command line arguments
 	//---------------------------------------------------------------------------------
@@ -77,6 +79,7 @@ int main(int argc, char *argv[]) {
 		if(strcmp(argv[i],"-L")==0){
 			L=stod(argv[i+1]);
 		}
+
 		if(strcmp(argv[i],"-N_e")==0){
 			N_e=stoi(argv[i+1]);
 			if(N_e%2!=0){
@@ -85,32 +88,86 @@ int main(int argc, char *argv[]) {
 				return 0;
 			}
 		}
+
 		if(strcmp(argv[i],"-A")==0){
 			A=stod(argv[i+1]);
+			if(A<=0){
+				std::cout<<"Enter an area greater than zero!"<<std::endl;
+				MPI_Finalize();
+				return 0;
+			}
 		}
+
 		if(strcmp(argv[i],"-I")==0){
 			I=stod(argv[i+1]);	
+			if(I<=0){
+				std::cout<<"Enter a second moment of intertia greater than zero!"<<std::endl;
+				MPI_Finalize();
+				return 0;
+			}
 		}
+
 		if(strcmp(argv[i],"-E")==0){
 			E=stod(argv[i+1]);	
+			if(E<=0){
+				std::cout<<"Enter a Young's modulus greater than zero!"<<std::endl;
+				MPI_Finalize();
+				return 0;
+			}
 		}
+
 		if(strcmp(argv[i],"-Tl")==0){
 			Tl=stod(argv[i+1]);
+			if(Tl<=0){
+				std::cout<<"Enter a loading period greater than 0!"<<std::endl;
+				MPI_Finalize();
+				return 0;
+			}
 		}
+
 		if(strcmp(argv[i],"-T")==0){
 			T=stod(argv[i+1]);
+			if(T<=0){
+				std::cout<<"Enter a period greater than 0!"<<std::endl;
+				MPI_Finalize();
+				return 0;
+			}
 		}
+
 		if(strcmp(argv[i],"-N_t")==0){
 			N_t=stoi(argv[i+1]);
+			if(N_t<=0){
+				std::cout<<"Enter a number of iterations greater than 0!"<<std::endl;
+				MPI_Finalize();
+				return 0;
+			}
 		}
+
 		if(strcmp(argv[i],"-rho")==0){
 			rho=stod(argv[i+1]);
+			if(N_t<=0){
+				std::cout<<"Enter a density greater than 0!"<<std::endl;
+				MPI_Finalize();
+				return 0;
+			}
 		}
+
 		if(strcmp(argv[i],"-eq")==0){
 			eq=stoi(argv[i+1]);
+			if(eq!=0 && eq!=1){
+				std::cout<<"Equation should be 0 for static or 1 for dynamic!"<<std::endl;
+				MPI_Finalize();
+				return 0;
+			}
 		}
+
 		if(strcmp(argv[i],"-sch")==0){
 			sch=stoi(argv[i+1]);
+			if(sch!=0 && sch!=1){
+				std::cout<<"Scheme should be 0 for explicit or 1 for implicit!"<<std::endl;
+				MPI_Finalize();
+				return 0;
+			}
 		}
 	}
 
@@ -394,7 +451,7 @@ int main(int argc, char *argv[]) {
 	// Parallel code
 	//---------------------------------------------------------------------------------
 
-	if(MPI_N_P==2){
+	if(MPI_N_P==2 || MPI_N_P==4){
 
 		///////////////////////////////////////////////////////////////////////////////////
 		///////////////////////////////////////////////////////////////////////////////////
@@ -404,10 +461,10 @@ int main(int argc, char *argv[]) {
 		if(eq==1){
 
 			///////////////////////////////////////////////////////////////////////////////////
-			// Explicit scheme
+			// Explicit scheme (only for 2 processes)
 			//---------------------------------------------------------------------------------
 
-			if(sch==0){
+			if(sch==0 && MPI_N_P==2){
 
 					double *MPI_u = new double[3*(N_e-1)]; //MPI array to store the displacements from the two processes after finishing
 
@@ -598,17 +655,28 @@ int main(int argc, char *argv[]) {
 				// Implicit scheme 
 				//---------------------------------------------------------------------------------
 
-				if(sch==1){
+				if(sch==1 && (MPI_N_P==2 || MPI_N_P==4)){
+
+					
 
 					double *MPI_u = new double[3*(N_e-1)];
 
-					int N_n=(N_e-2)/2+1;
 
-					if(MPI_P_ID==1){
+					int N_n=floor((N_e-1)/MPI_N_P);
+
+					if((N_e-1)%MPI_N_P){
+						N_n+=1;
+					}
+
+					int N_n_b=N_n; //Before modifying N_n for the last process copy it to N_n_b. This is used to set the blocking size 
+
+					if(MPI_P_ID==(MPI_N_P-1)){
 						N_n--;//Process with ID 1 gets one node less
 					}
 
 					int n = 3*N_n; //Dimension of mass matrices [M], [K], and vector {F}
+
+
 
 					// Mass [M], stiffness [K], and force {F} matrices and vector
 
@@ -621,6 +689,7 @@ int main(int argc, char *argv[]) {
 					get_M(rho,A,l,M,N_n);
 
 					if(MPI_P_ID==0){
+
 						disp(1,n,M,"M");
 					}
 
@@ -631,7 +700,7 @@ int main(int argc, char *argv[]) {
 					
 					//If process ID is 1 modify the K matrix and remove the upper left triangle of zeros and replace them with values 
 
-					if(MPI_P_ID==1){
+					if(MPI_P_ID>0){
 
 
 						K[(3*0)*5+1]=-(A*E)/l;
@@ -649,6 +718,13 @@ int main(int argc, char *argv[]) {
 						disp(5,n, K, "K");
 					}
 
+					// Get and display the effective matrix [K_eff] ([K] is being overwritten with [K_eff])
+
+					get_K_eff(dt,M,n,K,N_n);
+
+					if(MPI_P_ID==0){
+						disp(5,n,K,"K_eff");
+					}
 
 					//SCALAPACK setup 
 
@@ -666,7 +742,7 @@ int main(int argc, char *argv[]) {
 					desc_K[0]=501; //Type is banded matrix 1-by-P (LHS)
 					desc_K[1]=ctx; //Context
 					desc_K[2]=3*(N_e-1); //Problem size
-					desc_K[3]=3*((N_e-2)/2+1); //Blocking
+					desc_K[3]=3*N_n_b; //Blocking
 					desc_K[4]=0; //Process row/column
 					desc_K[5]=5; //Local size
 					desc_K[6]=0; //Reserved
@@ -675,26 +751,18 @@ int main(int argc, char *argv[]) {
 					desc_u_p[0]=502; //Type is banded matrix P-by-1 (RHS)
 					desc_u_p[1]=ctx; //Context
 					desc_u_p[2]=3*(N_e-1); //Problem size
-					desc_u_p[3]=3*((N_e-2)/2+1); //Blocking
+					desc_u_p[3]=3*N_n_b; //Blocking
 					desc_u_p[4]=0; //Process row/column
-					desc_u_p[5]=3*((N_e-2)/2+1); //Local size
+					desc_u_p[5]=3*N_n_b; //Local size
 					desc_u_p[6]=0; //Reserved
 			
-					int laf=(3*((N_e-2)/2+1)+2*4)*4; // laf
+					int laf=(3*N_n_b+2*4)*4; // laf
 					int lwork=4*4; //lwork
 					double *work=new double[lwork]; // work
 					double *af=new double[laf]; // af
 					double *af_tmp=new double[laf]; //af_tmp
 
-					// Get and display the effective matrix [K_eff] ([K] is being overwritten with [K_eff])
-
-					get_K_eff(dt,M,n,K,N_n);
-
-					if(MPI_P_ID==0){
-						disp(5,n,K,"K_eff");
-					}
-
-
+					
 					//Variables needed for solution
 					double *u = new double[n](); //u at time layer n
 					double *u_p = new double[n](); //u at time layer n+1
@@ -732,7 +800,11 @@ int main(int argc, char *argv[]) {
 						get_F(t,T,l,F,N_n);
 
 						//If process ID is 0 set last node y force to qy/l+Fy
-						if(MPI_P_ID==0){
+						if(MPI_N_P==2 && MPI_P_ID==0){
+							F[3*(N_n-1)+1]=t*1000.0/T*(l+1);
+						}
+
+						if(MPI_N_P==4 && MPI_P_ID==1){
 							F[3*(N_n-1)+1]=t*1000.0/T*(l+1);
 						}
 

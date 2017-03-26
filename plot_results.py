@@ -41,12 +41,8 @@ plt.legend()
 plt.grid(True)
 plt.savefig("results/task1.png")
 
-
-
 ## Task2
 # -------------------------------------------------
-
-
 
 t,u2_T=load_csv_file("results/explicit_center_node_defletion_wtr_time_TleqT.log")
 t,u2_01T=load_csv_file("results/explicit_center_node_defletion_wtr_time_Tleq01T.log")
@@ -79,16 +75,16 @@ dt=T/(Nt-1.0)
 
 u2_amp=[]
 
-i=int(round(0.5/dt))
+i=int(round(0.1/dt))
 u2_amp.append(max(u2_01T[i:])-min(u2_01T[i:]))
 
-i=int(round(0.5/dt))
+i=int(round(0.2/dt))
 u2_amp.append(max(u2_02T[i:])-min(u2_02T[i:]))
 
-i=int(round(0.5/dt))
+i=int(round(0.3/dt))
 u2_amp.append(max(u2_03T[i:])-min(u2_03T[i:]))
 
-i=int(round(0.5/dt))
+i=int(round(0.4/dt))
 u2_amp.append(max(u2_04T[i:])-min(u2_04T[i:]))
 
 i=int(round(0.5/dt))
@@ -213,11 +209,13 @@ plt.savefig("results/task4.png")
 # -------------------------------------------------
 
 x,u2=load_csv_file("results/task_dynamic_implicit.log")
-x,u2_p=load_csv_file("results/task_dynamic_implicit_parallel.log")
+x,u2_2p=load_csv_file("results/task_dynamic_implicit_parallel_2_processes.log")
+x,u2_4p=load_csv_file("results/task_dynamic_implicit_parallel_4_processes.log")
 
 plt.figure(7)
 plt.plot(x,u2,linestyle='-',color = '#1c4587',label='Serial')
-plt.plot(x,u2_p,linestyle='none',marker='+',color = '#1c4587',label='Parallel')
+plt.plot(x,u2_2p,linestyle='none',marker='+',color = '#1c4587',label='Parallel 2 processes')
+plt.plot(x,u2_4p,linestyle='none',marker='+',color = '#1c4587',label='Parallel 4 processes')
 plt.xlabel('x (m)')
 plt.ylabel('u2 (m)')
 plt.legend()
