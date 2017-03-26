@@ -1,3 +1,20 @@
+commit 523efc27974f1cfde3abe5df3087e562fcc62df3
+Author: kboychev <boichev7@gmail.com>
+Date:   Sun Mar 26 15:16:28 2017 +0100
+
+    Done.
+
+M	app.out
+M	main.cpp
+M	makefile
+M	plot_results.py
+M	report.pdf
+M	repository.log
+M	results/Thumbs.db
+M	results/task5.png
+A	results/task_dynamic_implicit_parallel_2_processes.log
+A	results/task_dynamic_implicit_parallel_4_processes.log
+
 commit f5d75e72184056173e87956bb0ffd0943ca0cc6f
 Author: kboychev <boichev7@gmail.com>
 Date:   Fri Mar 24 17:52:35 2017 +0000
